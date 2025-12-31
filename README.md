@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Portfolio Website
+
+A modern personal portfolio website built with Next.js, TypeScript, and Bootstrap v5.3.
+
+## Features
+
+- **About Page**: Personal introduction and information
+- **Projects Page**: Showcase your projects with descriptions and technologies
+- **Skills & Experience Page**: Display your skills and work experience
+- **Sidebar Navigation**: Easy navigation between pages
+- **Responsive Design**: Built with Bootstrap for mobile-friendly layouts
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ installed
+- npm or yarn package manager
+
+### Installation
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Run the development server:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Customization
 
-## Learn More
+### Update Your Information
 
-To learn more about Next.js, take a look at the following resources:
+1. **About Page** (`app/page.tsx`): Update your name, title, and bio
+2. **Sidebar** (`app/components/Sidebar.tsx`): Change the name in the sidebar
+3. **Projects** (`app/projects/page.tsx`): Add your actual projects
+4. **Skills & Experience** (`app/skills/page.tsx`): Update your skills and work history
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Styling
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project uses Bootstrap v5.3. You can customize the styling by:
+- Modifying Bootstrap classes in the components
+- Adding custom CSS in `app/globals.css`
+- Using Bootstrap's utility classes for quick styling
+
+## Project Structure
+
+```
+portfolio/
+├── app/
+│   ├── components/
+│   │   ├── BootstrapClient.tsx  # Bootstrap JS loader
+│   │   └── Sidebar.tsx           # Navigation sidebar
+│   ├── projects/
+│   │   └── page.tsx              # Projects page
+│   ├── skills/
+│   │   └── page.tsx              # Skills & Experience page
+│   ├── globals.css               # Global styles with Bootstrap
+│   ├── layout.tsx                # Root layout
+│   └── page.tsx                  # About/Home page
+├── public/                       # Static assets
+└── package.json
+```
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy is using [Vercel](https://vercel.com):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push your code to GitHub
+2. Import your repository on Vercel
+3. Vercel will automatically detect Next.js and configure the build settings
+4. Your site will be live!
+
+Alternatively, you can use the Vercel CLI:
+```bash
+npm i -g vercel
+vercel
+```
+
+## Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Bootstrap Documentation](https://getbootstrap.com/docs/5.3/)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
