@@ -73,12 +73,24 @@ export default function Hero() {
       </div>
 
       <div className={styles.actions}>
-        <a className={styles.cta} href={hero.actions.primary.href}>
-          {hero.actions.primary.label}
-        </a>
-        <a className={styles.ctaGhost} href={hero.actions.secondary.href}>
-          {hero.actions.secondary.label}
-        </a>
+        {/* Grouped so the three can be sized against each other. Loose siblings
+            of the scroll cue, they could only ever be as wide as their labels. */}
+        <div className={styles.ctaGroup}>
+          <a className={styles.cta} href={hero.actions.primary.href}>
+            {hero.actions.primary.label}
+          </a>
+          <a className={styles.ctaGhost} href={hero.actions.secondary.href}>
+            {hero.actions.secondary.label}
+          </a>
+          <a
+            className={styles.ctaGhost}
+            href={hero.actions.resume.href}
+            target="_blank"
+            rel="noopener"
+          >
+            {hero.actions.resume.label}
+          </a>
+        </div>
         <div className={styles.scrollCue} aria-hidden="true">
           {hero.actions.scrollCue}
         </div>

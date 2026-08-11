@@ -80,6 +80,35 @@
   flex-wrap: wrap;
 }
 
+/*
+ * The three buttons as one block of equal shapes rather than three widths set
+ * by three labels. `1fr` columns in a grid sized to its own content is what
+ * gets that without a number in it: intrinsic sizing resolves the fraction to
+ * the widest column's max-content, so all three take the width of the longest
+ * label and keep matching if the copy changes.
+ */
+.ctaGroup {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 14px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+/*
+ * Below this, three of the widest button no longer fit across the gutters, and
+ * the grid would start squeezing tracks under their labels. Stacked full width
+ * they stay equal, stay one block, and each becomes a larger target on the
+ * device most likely to be reading this.
+ */
+@media (max-width: 560px) {
+  .ctaGroup {
+    grid-auto-flow: row;
+    width: 100%;
+  }
+}
+
 .cta,
 .ctaGhost {
   display: inline-block;
@@ -87,6 +116,8 @@
   font-size: 14px;
   font-weight: 800;
   line-height: 1;
+  /* Equal widths mean the shorter labels have room around them to sit in. */
+  text-align: center;
   text-decoration: none;
   transition:
     background 0.25s,

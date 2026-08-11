@@ -2,6 +2,8 @@ export interface NavLink {
   href: string;
   label: string;
   accent?: boolean;
+  /** Leaves the page, so both nav renderings give it its own tab. */
+  external?: boolean;
 }
 
 export const brand = {
@@ -9,10 +11,30 @@ export const brand = {
   discipline: "Web designer",
 };
 
+/*
+ * The one place this site's resume path is written. The hero button and both
+ * nav renderings read it from here.
+ *
+ * Folder per discipline, file named the same in each: three résumés go out to
+ * three audiences, and `public/design/resume.pdf` says which one this is in a
+ * way `resume-design.pdf` in a flat folder does not. The folder names are the
+ * site slugs, so the URL matches the site the file belongs to. Nothing routes
+ * at these paths, so the static file is what answers.
+ *
+ * Placeholder until the PDF lands there.
+ */
+export const resumeHref = "/design/resume.pdf";
+
+/*
+ * Resume sits before Contact rather than after it: Contact is the terminal ask
+ * and the only accented item in the row, and it stops reading as the end of the
+ * list if something follows it.
+ */
 export const navLinks: NavLink[] = [
   { href: "#work", label: "Work" },
   { href: "#side", label: "Side" },
   { href: "#about", label: "About" },
+  { href: resumeHref, label: "Resume ↗", external: true },
   { href: "#contact", label: "Contact", accent: true },
 ];
 
@@ -26,6 +48,14 @@ export const footer = {
   creditLead: "Designed with",
   creditTail: "by Bhatt Studios",
   copyright: "© Bhatt Studios",
+  /*
+   * Scoped to this site on purpose. It says "this site", and the design
+   * portfolio is the one that has been tested; the hub and the two placeholders
+   * have not had their contrast checked yet, so the line does not appear there
+   * and must not be lifted over until they have.
+   */
+  accessibility:
+    "Designed for everyone in mind: this site meets WCAG 2.1 Level AA accessibility standards.",
 };
 
 /**

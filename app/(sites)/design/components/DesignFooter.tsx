@@ -1,17 +1,18 @@
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faUniversalAccess } from "@fortawesome/free-solid-svg-icons";
 
 import MotionToggle from "../../../components/MotionToggle";
 import { footer } from "../data/site";
 import styles from "./DesignFooter.module.css";
 
 /*
- * The heart's path data, taken straight from the package rather than through
- * case-03's Icon component. That component is scoped by its own header comment
- * to the vocabulary of the shipped sales app, which is what lets those renders
- * stand as evidence about the product; borrowing it for site chrome would
- * quietly undo that. One glyph, so it is drawn here.
+ * Path data taken straight from the package rather than through case-03's Icon
+ * component. That component is scoped by its own header comment to the
+ * vocabulary of the shipped sales app, which is what lets those renders stand as
+ * evidence about the product; borrowing it for site chrome would quietly undo
+ * that. Two glyphs, so they are drawn here.
  */
 const [HEART_W, HEART_H, , , HEART_PATH] = faHeart.icon;
+const [ACCESS_W, ACCESS_H, , , ACCESS_PATH] = faUniversalAccess.icon;
 
 export default function DesignFooter() {
   /*
@@ -49,6 +50,29 @@ export default function DesignFooter() {
           {footer.copyright} {year}
         </span>
       </div>
+
+      {/*
+        Its own line under the rest, because it is a statement about the page
+        rather than a piece of the credit line. A <p> and not a div: it is a
+        sentence, and it is the one line in this footer somebody may actually be
+        looking for.
+      */}
+      <p className={styles.access}>
+        <svg
+          className={styles.accessIcon}
+          /* Sized in em from the glyph's own ratio, so it tracks the type it
+             sits beside instead of being pinned to a pixel height. */
+          width={`${(ACCESS_W / ACCESS_H).toFixed(3)}em`}
+          height="1em"
+          viewBox={`0 0 ${ACCESS_W} ${ACCESS_H}`}
+          fill="currentColor"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d={ACCESS_PATH as string} />
+        </svg>
+        {footer.accessibility}
+      </p>
     </footer>
   );
 }

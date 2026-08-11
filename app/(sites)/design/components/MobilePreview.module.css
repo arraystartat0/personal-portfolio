@@ -248,11 +248,28 @@
   color: var(--ink-muted);
 }
 
+/*
+ * clip, not hidden, for the reason .root gives in design.module.css: `hidden`
+ * makes this a scrollport, and a scrollport here is a second thing that can be
+ * scrolled with nobody asking it to.
+ *
+ * The iframe keeps its real 874px height and is only drawn smaller, so `hidden`
+ * measured that 874 against a 760px box and left 114px of scrollable overflow
+ * sitting in the frame. A fragment link inside the preview whose target the page
+ * cannot fully reach hands the shortfall to the nearest ancestor scroller, and
+ * that was this: #contact is the last section, so its jump always asks for more
+ * scroll than the page has left, and the frame answered by scrolling its own
+ * iframe up 114px and leaving a band of blank paper under the footer. No other
+ * link did it because no other link runs out of page.
+ *
+ * `clip` clips without being a scroll container, so there is nothing left to
+ * hand the shortfall to.
+ */
 .viewport {
   position: relative;
   flex: none;
   border: 2px solid var(--ink);
-  overflow: hidden;
+  overflow: clip;
 }
 
 /* --- the skeleton --------------------------------------------------------- */

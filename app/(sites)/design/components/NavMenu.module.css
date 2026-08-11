@@ -114,7 +114,12 @@
   z-index: 31;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  /*
+   * Stretch, not flex-start: it leaves the words ragged left where they were,
+   * but makes the whole width of the panel the tap target rather than the ink
+   * of a four-letter word. Same reasoning as the burger's 40px square above.
+   */
+  align-items: stretch;
   gap: 4px;
   width: min(320px, 84vw);
   padding: 78px var(--gutter) var(--gutter);
@@ -148,12 +153,30 @@
   text-decoration: none;
 }
 
+/*
+ * The pair that centres the menu down the panel, so it sits where a thumb
+ * already rests instead of up by the burger.
+ *
+ * Auto margins rather than justify-content: center, and that is the whole point
+ * of doing it this way. Centred content that outgrows its scroller (a short
+ * landscape viewport, or large text settings) overflows equally in both
+ * directions, and the top of it cannot be scrolled back to: the first link
+ * becomes unreachable. An auto margin resolves to zero once the free space is
+ * gone, so the menu centres while it fits and falls back to a plain scrollable
+ * list the moment it does not.
+ */
+.panelLink:first-child {
+  margin-top: auto;
+}
+
 .panelLinkAccent {
   color: var(--blue);
 }
 
+/* Last child, so its auto margin is the other half of the centring above. */
 .panelSwitcher {
   margin-top: 22px;
+  margin-bottom: auto;
   padding-top: 18px;
   border-top: 2px solid var(--rule);
   width: 100%;

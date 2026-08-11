@@ -35,6 +35,8 @@ export default function DesignNav() {
             key={link.href}
             href={link.href}
             className={`${ds.underline} ${link.accent ? styles.linkAccent : styles.link}`}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener" : undefined}
           >
             {link.label}
           </a>

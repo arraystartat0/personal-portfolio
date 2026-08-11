@@ -140,6 +140,8 @@ export default function NavMenu() {
             key={link.href}
             href={link.href}
             className={`${styles.panelLink} ${link.accent ? styles.panelLinkAccent : ""}`}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener" : undefined}
           >
             {link.label}
           </a>

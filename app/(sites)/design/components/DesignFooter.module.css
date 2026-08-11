@@ -33,6 +33,51 @@
 }
 
 /*
+ * A full-width line of its own under the credit row, which is what flex-basis
+ * buys here: the footer is already a wrapping row, so claiming the whole basis
+ * pushes this onto the next line without the sheet having to become a column.
+ *
+ * The extra margin is on top of the footer's own 7px row gap, bringing the two
+ * to 11px, the size of the type. That gap is tuned for the two halves of one
+ * line wrapping under each other, and this is a different kind of thing from the
+ * credit above it, so it gets the distance to say so.
+ */
+.access {
+  display: flex;
+  flex-basis: 100%;
+  /*
+   * Centred across the full width, rather than picking one of the two edges the
+   * credit row is already using. It is addressed to the reader instead of being
+   * one more piece of chrome, and sitting under both halves rather than lining
+   * up with either is what says so.
+   */
+  justify-content: center;
+  text-align: center;
+  /*
+   * Vertically it stays at the start: the sentence wraps to two lines on a
+   * narrow screen, and centring the icon against the block would leave it
+   * floating beside the gap between them instead of beside the first line.
+   */
+  align-items: flex-start;
+  gap: 7px;
+  margin: 4px 0 0;
+}
+
+/*
+ * Blue, the site's system colour, rather than the green this symbol usually
+ * wears. The heart above is the one licence this sheet gives itself to leave the
+ * palette, and it is spent; a second exception would make it a habit instead of
+ * a decision.
+ */
+.accessIcon {
+  flex: none;
+  /* Half the leading, so a 1em glyph sits optically centred on the first line
+     rather than hanging from its top. */
+  margin-top: 0.25em;
+  color: var(--blue);
+}
+
+/*
  * The motion control and the copyright share the right-hand end of the rule, on
  * the same baseline as the credit opposite. They wrap together and fall left on
  * a narrow screen, the way the two halves of the footer already do.

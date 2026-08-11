@@ -1,3 +1,5 @@
+import { resumeHref } from "./site";
+
 export interface HeadlineSegment {
   text?: string;
   tone?: "accent" | "muted";
@@ -40,6 +42,8 @@ export const hero = {
   actions: {
     primary: { href: "#work", label: "View studies ↓" },
     secondary: { href: "#contact", label: "Get in touch" },
+    // Path lives in site.ts, next to the nav entry pointing at the same file.
+    resume: { href: resumeHref, label: "View resume ↗" },
     scrollCue: "SCROLL ↓",
   },
 };
