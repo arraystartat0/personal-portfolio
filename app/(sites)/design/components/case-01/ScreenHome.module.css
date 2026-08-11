@@ -1,0 +1,266 @@
+/*
+ * UBC's published brand palette: UBC Blue #002145 primary, PMS 2935 #0055B7 and
+ * PMS 2975 #97D4E9 among the secondaries. Used because the proposal is aimed at
+ * one institution and should look like it belongs there. Colours only: no crest,
+ * no wordmark, nothing that could pass this off as an official artifact.
+ *
+ * The soft wash is a tint of #97D4E9 rather than an invented blue, so every
+ * value here traces back to the published palette.
+ */
+.screen {
+  --ins-ink: #1b2733;
+  --ins-band: #002145;
+  --ins-accent: #0055B7;
+  --ins-accent-soft: #e4f1fa;
+  --ins-page: #f7f9fb;
+  --ins-muted: rgba(27, 39, 51, 0.64);
+  --ins-line: rgba(0, 33, 69, 0.3);
+  --ins-hair: rgba(0, 33, 69, 0.14);
+  --ins-radius: 14px;
+  --ins-radius-sm: 9px;
+
+  background: var(--ins-page);
+}
+
+/*
+ * The institute's own strip, under the university chrome. Quieter than the band
+ * above it: this layer belongs to the institute, so it should not compete with
+ * the one that belongs to the university.
+ */
+.memberBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--ins-hair);
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--ins-muted);
+}
+
+.memberBarTitle {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ins-accent-soft);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--ins-band);
+}
+
+.memberLink {
+  color: var(--ins-ink);
+}
+
+.search {
+  margin-left: auto;
+  padding: 4px 11px;
+  border: 1px solid var(--ins-hair);
+  border-radius: 999px;
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+.signIn {
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--ins-accent);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.content {
+  padding: clamp(18px, 2.4vw, 30px) 14px 14px;
+}
+
+.kicker {
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: var(--ins-muted);
+}
+
+.headline {
+  margin-top: 9px;
+  max-width: 22ch;
+  font-size: clamp(20px, 2.8vw, 34px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--ins-ink);
+}
+
+.body {
+  margin-top: 8px;
+  max-width: 56ch;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ins-muted);
+}
+
+.problems {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.problem {
+  padding: 13px;
+  border: 1px solid var(--ins-hair);
+  border-radius: var(--ins-radius);
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 33, 69, 0.06);
+  cursor: pointer;
+  transition:
+    background 0.22s,
+    border-color 0.22s,
+    transform 0.22s;
+}
+
+.problem:hover {
+  background: #ffffff;
+  border-color: var(--ins-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px -12px rgba(0, 85, 183, 0.5);
+}
+
+.problemName {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ins-ink);
+}
+
+/*
+ * Underlined and in the accent, so it reads as a route to a person rather than
+ * the dead bold text the current page uses. Spans, not anchors: mockup.
+ */
+.leads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 8px;
+  margin-top: 5px;
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+/* Muted and unlinked, so the accent stays reserved for the names themselves. */
+.leadsLabel {
+  color: var(--ins-muted);
+}
+
+.lead {
+  color: var(--ins-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.problemBlurb {
+  margin-top: 6px;
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--ins-muted);
+}
+
+/*
+ * The badges. Small, uniform, and always on their own line, so the eye can run
+ * down the column and match them across cards without reading. A tag that moved
+ * around per card would be decoration; in a fixed position it is data.
+ */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 9px;
+}
+
+.tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ins-accent-soft);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+  color: var(--ins-band);
+  white-space: nowrap;
+}
+
+.overlap {
+  display: flex;
+  gap: 5px;
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px dashed var(--ins-hair);
+  font-size: 8.5px;
+  line-height: 1.4;
+  color: var(--ins-muted);
+}
+
+/* Dashed rule and a two-way arrow: this line is about other cards, not this one. */
+.overlapMark {
+  flex: none;
+  font-weight: 700;
+}
+
+.problemMeta {
+  margin-top: 10px;
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.09em;
+  color: var(--ins-muted);
+  transition: color 0.22s;
+}
+
+.problem:hover .problemMeta {
+  color: var(--ins-ink);
+}
+
+.labs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px 13px;
+  border: 1px solid var(--ins-hair);
+  border-radius: var(--ins-radius);
+  background: #ffffff;
+}
+
+.labsLabel {
+  flex: none;
+  width: 78px;
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  color: var(--ins-muted);
+}
+
+.labsRows {
+  flex: 1;
+  min-width: 180px;
+  display: grid;
+  gap: 7px;
+}
+
+.labsRow {
+  display: flex;
+  gap: 10px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--ins-ink);
+}
+
+.labsKind {
+  flex: none;
+  width: 52px;
+  color: var(--ins-muted);
+}

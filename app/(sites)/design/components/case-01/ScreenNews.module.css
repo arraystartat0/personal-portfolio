@@ -1,0 +1,491 @@
+/*
+ * The same UBC tokens ScreenHome and ScreenProblem set, repeated rather than
+ * shared, for the reason stated there: these are separate mockups and one must
+ * not inherit another's scope by accident. Change one palette and change them all.
+ */
+.screen {
+  --ins-ink: #1b2733;
+  --ins-band: #002145;
+  --ins-accent: #0055B7;
+  --ins-accent-soft: #e4f1fa;
+  --ins-page: #f7f9fb;
+  --ins-muted: rgba(27, 39, 51, 0.64);
+  --ins-line: rgba(0, 33, 69, 0.3);
+  --ins-hair: rgba(0, 33, 69, 0.14);
+  --ins-radius: 14px;
+  --ins-radius-sm: 9px;
+
+  background: var(--ins-page);
+}
+
+.breadcrumbBar {
+  padding: 10px 14px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--ins-hair);
+}
+
+.breadcrumb {
+  font-size: 10px;
+  line-height: 1;
+  color: var(--ins-muted);
+}
+
+.content {
+  padding: clamp(16px, 2.2vw, 26px) 14px 14px;
+}
+
+.kicker {
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: var(--ins-muted);
+}
+
+.headline {
+  margin-top: 9px;
+  max-width: 24ch;
+  font-size: clamp(19px, 2.5vw, 30px);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  color: var(--ins-ink);
+}
+
+.body {
+  margin-top: 8px;
+  max-width: 58ch;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ins-muted);
+}
+
+/* --- the problem filter row ---------------------------------------------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ins-hair);
+}
+
+.filtersLabel {
+  margin-right: 3px;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  color: var(--ins-muted);
+}
+
+/* Pills, matching the tags on screen 01 rather than a second control language. */
+.filter,
+.filterActive {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--ins-hair);
+  border-radius: 999px;
+  background: #ffffff;
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--ins-ink);
+  white-space: nowrap;
+}
+
+.filterActive {
+  border-color: var(--ins-accent);
+  background: var(--ins-accent);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.filterCount {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--ins-muted);
+}
+
+.filterActive .filterCount {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* --- feed ---------------------------------------------------------------- */
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+/*
+ * The rail only earns its column when the main feed still has room to be a
+ * feed. Below this it stacks under, rather than squeezing both into two
+ * unreadable columns.
+ */
+@media (min-width: 760px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 200px);
+  }
+}
+
+.main {
+  min-width: 0;
+}
+
+.lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border: 1px solid var(--ins-hair);
+  border-radius: var(--ins-radius);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+@media (min-width: 520px) {
+  .lead {
+    grid-template-columns: minmax(120px, 38%) minmax(0, 1fr);
+  }
+}
+
+/*
+ * The art field. Not a placeholder for a photograph that never arrives: the
+ * subject the piece is filed under, set at the size a photograph would have
+ * been, because it is the more useful of the two.
+ */
+.leadArt {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  min-height: 108px;
+  padding: 13px;
+  background: var(--ins-band);
+}
+
+.leadArtLabel {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.leadArtProblem {
+  font-size: clamp(13px, 1.5vw, 17px);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.leadText {
+  padding: 13px;
+}
+
+.leadMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.kind {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ins-accent-soft);
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  color: var(--ins-band);
+  white-space: nowrap;
+}
+
+.date {
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--ins-muted);
+  white-space: nowrap;
+}
+
+.leadTitle {
+  margin-top: 8px;
+  font-size: clamp(14px, 1.7vw, 19px);
+  font-weight: 800;
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  color: var(--ins-ink);
+}
+
+.leadDek {
+  margin-top: 7px;
+  max-width: 46ch;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--ins-muted);
+}
+
+.rows {
+  display: grid;
+  gap: 0;
+  margin-top: 10px;
+  border: 1px solid var(--ins-hair);
+  border-radius: var(--ins-radius);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/*
+ * The kind pill and the date hold fixed positions on every row, so the eye can
+ * run the column without reading. The title takes whatever is left, which is the
+ * only part of a row worth giving elastic width to.
+ */
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 4px 9px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--ins-hair);
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+@media (min-width: 620px) {
+  .row {
+    grid-template-columns: 62px minmax(0, 1fr) auto auto;
+  }
+}
+
+.rowTitle {
+  min-width: 0;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--ins-ink);
+}
+
+.rowProblem {
+  grid-column: 2;
+  min-width: 0;
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--ins-accent);
+}
+
+@media (min-width: 620px) {
+  .rowProblem {
+    grid-column: auto;
+    text-align: right;
+  }
+}
+
+/* --- the rail ------------------------------------------------------------ */
+
+.rail {
+  align-self: start;
+  padding: 12px;
+  border: 1px solid var(--ins-hair);
+  border-radius: var(--ins-radius);
+  background: var(--ins-accent-soft);
+}
+
+.railLabel {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  color: var(--ins-muted);
+}
+
+.railItem {
+  display: flex;
+  gap: 7px;
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(0, 33, 69, 0.16);
+}
+
+.railItem:first-of-type {
+  border-top: 0;
+}
+
+/* The same four glyphs the calendar uses. One vocabulary, two components. */
+.railGlyph {
+  flex: none;
+  font-size: 9px;
+  line-height: 1.5;
+  color: var(--ins-band);
+}
+
+.railDate {
+  display: block;
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  color: var(--ins-muted);
+}
+
+.railTitle {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--ins-ink);
+}
+
+/* ↓, not →: the calendar it points at is further down this same page. */
+.railLink {
+  margin-top: 11px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(0, 33, 69, 0.16);
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--ins-accent);
+}
+
+/* --- screen 04: the editor's view ---------------------------------------- */
+
+.editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  background: var(--ins-page, #f7f9fb);
+
+  --ins-ink: #1b2733;
+  --ins-band: #002145;
+  --ins-accent: #0055B7;
+  --ins-accent-soft: #e4f1fa;
+  --ins-page: #f7f9fb;
+  --ins-muted: rgba(27, 39, 51, 0.64);
+  --ins-hair: rgba(0, 33, 69, 0.14);
+  --ins-radius-sm: 9px;
+}
+
+@media (min-width: 700px) {
+  .editor {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  }
+}
+
+.editorForm {
+  padding: 16px 14px;
+  background: #ffffff;
+}
+
+.editorTitle {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--ins-ink);
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  align-items: center;
+  gap: 4px 10px;
+  margin-top: 9px;
+}
+
+.fieldLabel {
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--ins-muted);
+}
+
+.fieldInput,
+.fieldInputRequired {
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--ins-hair);
+  border-radius: var(--ins-radius-sm);
+  background: #ffffff;
+  font-size: 10px;
+  line-height: 1.3;
+  color: var(--ins-ink);
+}
+
+/*
+ * The one field the current site does not have, drawn as the one field the form
+ * insists on. Two signals, not one: the accent border and the word "Required".
+ */
+.fieldInputRequired {
+  border: 2px solid var(--ins-accent);
+  background: var(--ins-accent-soft);
+  font-weight: 700;
+}
+
+.fieldHint {
+  grid-column: 2;
+  font-size: 8.5px;
+  line-height: 1.3;
+  color: var(--ins-muted);
+}
+
+.editorButton {
+  display: inline-block;
+  margin-top: 13px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: var(--ins-accent);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+.publishes {
+  padding: 16px 14px;
+  background: var(--ins-accent-soft);
+}
+
+.publishesLabel {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  color: var(--ins-muted);
+}
+
+.publishesList {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.destination {
+  display: flex;
+  gap: 7px;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--ins-ink);
+}
+
+/* →, not ↓: these are three other places, not somewhere further down. */
+.destinationMark {
+  flex: none;
+  font-weight: 700;
+  color: var(--ins-accent);
+}
+
+.publishesNote {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 33, 69, 0.16);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--ins-muted);
+}

@@ -1,0 +1,534 @@
+/*
+ * The study runs on the tint rather than the paper, so its framed exhibits (all
+ * of which are paper) lift off the ground instead of dissolving into it. There
+ * are seven of them here, which is more than either other study carries.
+ */
+.section {
+  background: var(--tint);
+}
+
+.title {
+  max-width: 17ch;
+}
+
+.body {
+  padding: clamp(18px, 2.4vw, 26px) var(--gutter) clamp(28px, 3.6vw, 44px);
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 42px);
+  margin-top: clamp(20px, 2.6vw, 32px);
+}
+
+/* Three quarters to the prose, the rest to the meta list. Same as case 01. */
+@media (min-width: 900px) {
+  .intro {
+    grid-template-columns: minmax(0, 3fr) minmax(230px, 1fr);
+  }
+}
+
+.introText {
+  display: grid;
+  align-content: start;
+  gap: clamp(13px, 1.3vw, 19px);
+  max-width: 76ch;
+}
+
+.thesisLead {
+  font-weight: 800;
+}
+
+/* --- the brief ------------------------------------------------------------ */
+
+/*
+ * clip, not hidden, for the reason .root gives: hidden would make this a
+ * scrollport and trap the sticky nav. It is here so the grid inside can hang a
+ * pixel over the right edge (see .constraints).
+ */
+.brief {
+  overflow: clip;
+  border-top: 2px solid var(--rule);
+  border-bottom: 2px solid var(--rule);
+}
+
+.briefHead {
+  padding: clamp(22px, 2.4vw, 30px) var(--panel-inset) clamp(16px, 1.8vw, 22px);
+}
+
+/*
+ * Larger than ds.kicker's 10px, and overridden here rather than in the token
+ * sheet: every other kicker on the site labels a cell inside a band, while this
+ * one heads a whole band and has four cells under it. It is a heading, so it is
+ * set like one.
+ */
+.briefLabel {
+  font-size: clamp(11px, 1.05vw, 13px);
+  line-height: 1.35;
+  letter-spacing: 0.14em;
+}
+
+.briefNote {
+  margin: 9px 0 0;
+  max-width: 60ch;
+  font-size: clamp(15px, 1.35vw, 19px);
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--ink-muted);
+}
+
+/*
+ * Counted columns, not auto-fit, for the reason Findings.module.css counts its
+ * own: the track count has to divide the item count or the last row trails empty
+ * cells. There are four constraints, so one, two and four all divide cleanly and
+ * three is never allowed. Under auto-fit the three-column state was reachable
+ * between roughly 690 and 920px, and it left the fourth cell drawing one
+ * internal rule with the other missing, which reads as a mistake rather than as
+ * a lattice with blank cells.
+ *
+ * 960px for the four-up so the tracks are still 240px there, which is within a
+ * few pixels of where auto-fit was already turning.
+ *
+ * Every cell draws both its rules and the band clips a pixel off two edges. See
+ * ds.dividedBand for why that beats skipping the rule on the last child.
+ */
+.constraints {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-right: -1px;
+  margin-bottom: -1px;
+}
+
+/*
+ * The rule over the first constraint belongs to the grid, so it arrives with the
+ * grid and not before it. Stacked, every constraint already draws its own rule
+ * underneath, and a rule above the first one as well turned the heading into a
+ * boxed item sitting on top of four more instead of the line that introduces
+ * them. Tied to the same breakpoint rather than removed in a max-width query of
+ * its own, so the rule cannot come back without the columns coming back with it.
+ */
+@media (min-width: 520px) {
+  .constraints {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--rule);
+  }
+}
+
+@media (min-width: 960px) {
+  .constraints {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.constraint {
+  padding: clamp(20px, 2.4vw, 28px) var(--panel-inset);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.constraintFinding {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+/*
+ * The consequence is set as body copy under a hard label, so the pair reads as
+ * "this is true, therefore this". Two paragraphs of equal weight would let a
+ * reader take them for two separate observations.
+ */
+.constraintConsequence {
+  margin-top: 9px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-75);
+}
+
+.constraintSo {
+  display: inline-block;
+  margin-right: 7px;
+  padding: 1px 6px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  vertical-align: 1px;
+}
+
+/* --- the render frames ----------------------------------------------------- */
+
+.renders {
+  margin: var(--band-gap) var(--gutter) 0;
+}
+
+.stackedFrame {
+  margin-top: clamp(16px, 2vw, 24px);
+}
+
+/*
+ * Inside the frame, under the header rule: this qualifies the render it sits on
+ * rather than introducing a new exhibit, and the market frame is the one place
+ * on the page showing something that is not mine.
+ */
+.frameNote {
+  padding: 9px 12px;
+  border-bottom: 2px solid var(--ink);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.transition {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 2px;
+}
+
+.transitionArrow {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--ochre-ink);
+}
+
+.transitionText {
+  max-width: 74ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(26, 24, 20, 0.72);
+}
+
+/* Names a screen inside the shipped frame, on the same 2px rule as the header. */
+.screenLabel {
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--ink);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  color: var(--ochre-ink);
+}
+
+.screenLabelStacked {
+  border-top: 2px solid var(--ink);
+}
+
+/* --- beats ----------------------------------------------------------------- */
+
+/* Same trick as the brief band: the band clips, the grid overhangs by a pixel
+ * on both trailing edges. See ds.dividedBand. */
+.beatsBand {
+  overflow: clip;
+  margin-top: var(--band-gap);
+  border-top: 2px solid var(--rule);
+  border-bottom: 2px solid var(--rule);
+}
+
+.beats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  margin-right: -1px;
+  margin-bottom: -1px;
+}
+
+.sketch {
+  margin-top: 16px;
+  padding: 14px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+}
+
+.sketchLabel {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  color: var(--ochre-ink);
+}
+
+.queue {
+  display: grid;
+  gap: 4px;
+  margin-top: 11px;
+}
+
+.queueRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.queueState {
+  margin-bottom: 5px;
+  padding-left: 16px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--ink-muted);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+}
+
+.dotBlue {
+  background: var(--blue);
+}
+
+.dotOchre {
+  background: var(--ochre);
+}
+
+.queueNote {
+  margin-top: 12px;
+  padding-top: 9px;
+  border-top: 1px solid var(--hair);
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--ink-muted);
+}
+
+/* --- onboarding sketch ------------------------------------------------------ */
+
+.tourRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tourStep {
+  padding: 2px 7px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+}
+
+.tourTarget {
+  padding: 4px 10px;
+  border: 2px solid var(--blue);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.tourHint {
+  margin-top: 9px;
+  padding: 9px 10px;
+  background: rgba(31, 62, 194, 0.09);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.tourDots {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.tourDots span {
+  width: 14px;
+  height: 3px;
+  background: var(--ink-22);
+}
+
+.tourDots .tourDotOn {
+  background: var(--ink);
+}
+
+/* --- undo sketch ------------------------------------------------------------- */
+
+.toast {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.toastAction {
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--ochre);
+}
+
+/* --- the features band -------------------------------------------------------- */
+
+.featuresHead {
+  margin-bottom: clamp(20px, 2.4vw, 30px);
+}
+
+.featuresTitle {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.featuresNote {
+  margin: 7px 0 0;
+  max-width: 60ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.bigFeatures {
+  display: grid;
+  margin-top: var(--band-gap);
+}
+
+.bigFeature {
+  border-top: 2px solid var(--rule);
+  padding: clamp(24px, 3vw, 36px) var(--panel-inset) clamp(28px, 3.4vw, 42px);
+}
+
+.bigFeatureTitle {
+  margin-top: 11px;
+  max-width: 24ch;
+  font-size: clamp(20px, 2.2vw, 30px);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.bigFeatureBody {
+  margin: 10px 0 0;
+  max-width: 78ch;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-75);
+}
+
+/* The one bold word in any body on this page, so it takes full ink. */
+.bodyStrong {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.bigFrame {
+  margin-top: clamp(14px, 1.8vw, 20px);
+}
+
+/* --- the dashboard banner ------------------------------------------------------ */
+
+.bannerWrap {
+  margin-top: clamp(16px, 2vw, 22px);
+  max-width: 460px;
+}
+
+/*
+ * Near-black, ochre kicker, one heavy line. The banner is the only element in
+ * the study that runs dark, which is the point: on the real dashboard it is the
+ * one thing that changes that week, and it has to be noticed without being read.
+ */
+.week {
+  margin-top: 10px;
+  padding: 16px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.weekLabel {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  color: var(--ochre);
+}
+
+.weekHeadline {
+  margin-top: 9px;
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  white-space: pre-line;
+}
+
+.weekNote {
+  margin-top: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  opacity: 0.68;
+}
+
+/* --- closing panels -------------------------------------------------------------- */
+
+.panelsBand {
+  overflow: clip;
+  border-top: 2px solid var(--rule);
+  border-bottom: 2px solid var(--rule);
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-right: -1px;
+  margin-bottom: -1px;
+}
+
+.panel {
+  padding: clamp(22px, 2.6vw, 32px) var(--panel-inset);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.panelBody {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-75);
+}
+
+/* --- results and sources ---------------------------------------------------------- */
+
+/*
+ * Label and strip banded together, and the band owns the rule that closes it,
+ * exactly as the Blitz study does. Borrowing the next section's border would
+ * leave the strip open the moment anything after it moves.
+ */
+.results {
+  border-bottom: 2px solid var(--rule);
+}
+
+.resultsLabel {
+  padding: clamp(20px, 2.4vw, 26px) var(--panel-inset) clamp(12px, 1.4vw, 16px);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ochre-ink);
+}
+
+.sources {
+  border-bottom: 2px solid var(--rule);
+}
+
+.sourcesInner {
+  padding: clamp(20px, 2.4vw, 28px) var(--gutter);
+}

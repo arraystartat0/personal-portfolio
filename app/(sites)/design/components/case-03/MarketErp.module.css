@@ -1,0 +1,192 @@
+/*
+ * A desktop business application from about 2004, drawn in its own palette
+ * rather than the study's: system grey, bevelled everything, 11px Tahoma, and
+ * borders instead of space. None of the Swiss tokens reach in here on purpose,
+ * because the frame is quoting something, not designing it.
+ */
+.app {
+  --erp-face: #d4d0c8;
+  --erp-field: #ffffff;
+  --erp-line: #808080;
+  --erp-light: #ffffff;
+  --erp-dark: #404040;
+  --erp-ink: #101010;
+  --erp-muted: #5a5a5a;
+  --erp-title: #0a246a;
+
+  background: var(--erp-face);
+  color: var(--erp-ink);
+  font-family: Tahoma, Verdana, Geneva, sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 3px 8px;
+  border-bottom: 1px solid var(--erp-line);
+  background: var(--erp-face);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--erp-line);
+}
+
+/* The bevel is the whole look: two light edges, two dark ones, no radius. */
+.toolButton {
+  padding: 2px 8px;
+  border-top: 1px solid var(--erp-light);
+  border-left: 1px solid var(--erp-light);
+  border-right: 1px solid var(--erp-dark);
+  border-bottom: 1px solid var(--erp-dark);
+  background: var(--erp-face);
+  font-size: 10px;
+}
+
+.breadcrumb {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--erp-line);
+  background: #ececec;
+  font-size: 10px;
+  color: var(--erp-muted);
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 8px;
+  background: var(--erp-title);
+  color: #fff;
+}
+
+.title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.code {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.body {
+  padding: 8px;
+}
+
+/*
+ * Fixed 130px columns that pack as tightly as they fit. Thirty of them in an
+ * undifferentiated block is the finding, so the grid must never introduce a
+ * grouping the real thing does not have.
+ */
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 3px 8px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  flex: 0 0 58px;
+  overflow: hidden;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--erp-ink);
+}
+
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 15px;
+  border-top: 1px solid var(--erp-dark);
+  border-left: 1px solid var(--erp-dark);
+  border-right: 1px solid var(--erp-light);
+  border-bottom: 1px solid var(--erp-light);
+  background: var(--erp-field);
+}
+
+/*
+ * Twelve columns of grid lines. Scrolls inside the frame rather than widening
+ * it: the render sits in a 2px ink box, and a table that pushes that box wider
+ * would give the page a horizontal scrollbar of its own.
+ */
+/* See PrototypeApp.module.css: the pair keeps overflow-x able to scroll. */
+.tableWrap {
+  margin-top: 10px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: 10px;
+}
+
+.table th,
+.table td {
+  padding: 2px 5px;
+  border: 1px solid var(--erp-line);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table th {
+  background: var(--erp-face);
+  font-weight: 700;
+}
+
+.table td {
+  height: 16px;
+  background: var(--erp-field);
+}
+
+.buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.button {
+  min-width: 66px;
+  padding: 3px 10px;
+  border-top: 1px solid var(--erp-light);
+  border-left: 1px solid var(--erp-light);
+  border-right: 1px solid var(--erp-dark);
+  border-bottom: 1px solid var(--erp-dark);
+  background: var(--erp-face);
+  text-align: center;
+  font-size: 10px;
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 8px;
+  border-top: 1px solid var(--erp-line);
+  font-size: 10px;
+  color: var(--erp-muted);
+}
+
+.licence {
+  color: #7a3b0b;
+}

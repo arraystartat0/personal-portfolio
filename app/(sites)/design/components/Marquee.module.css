@@ -1,0 +1,43 @@
+.marquee {
+  display: flex;
+  overflow: hidden;
+  padding: 13px 0;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.track {
+  display: flex;
+  gap: 40px;
+  padding-right: 40px;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  animation: marq 32s linear infinite;
+}
+
+.separator {
+  color: var(--ochre);
+}
+
+@keyframes marq {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Paired with the attribute rule below; see globals.css for why it is two blocks. */
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}
+
+:root[data-motion="off"] .track {
+  animation: none;
+}

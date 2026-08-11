@@ -1,0 +1,557 @@
+/* Modernist tokens, scoped to the designer site so the other two sites are untouched. */
+.root {
+  --paper: #f5f2ea;
+  --ink: #1a1814;
+  --blue: #1f3ec2;
+  --blue-pressed: #182f95;
+  --ochre: #d99414;
+  --ochre-ink: #8a5c05;
+  --tint: #ece8dd;
+  --rule: rgba(26, 24, 20, 0.4);
+  --hair: rgba(26, 24, 20, 0.18);
+  --ink-80: rgba(26, 24, 20, 0.8);
+  --ink-75: rgba(26, 24, 20, 0.75);
+  /*
+   * The floor for text, and the only muted rung left. Ink over this paper needs
+   * 0.61 alpha to clear 4.5:1, so every rung below that (0.45, 0.50, 0.55, and
+   * 0.62 by a hair) was a value that could not legally carry copy: 0.45 missed
+   * even the 3:1 large-text allowance. They were all being used at 11 and 12px.
+   *
+   * Collapsed to one rather than raised to four, because four compliant rungs
+   * would have spanned 0.62 to 0.75 and been indistinguishable from each other
+   * anyway. One muted colour cannot be picked wrongly. 0.64 sits at 5.09:1,
+   * deliberately above the 0.61 floor rather than on it.
+   */
+  --ink-muted: rgba(26, 24, 20, 0.64);
+  /* Rules and borders, not text. Decorative, so 1.4.3 does not reach it. */
+  --ink-22: rgba(26, 24, 20, 0.22);
+  /*
+   * The huge study ordinal. It reads as a watermark but it is real text, so the
+   * 3:1 large-text floor applies to it; at --ink-22 it measured 1.58:1. 0.48 is
+   * the first step that clears 3:1 on the paper and on the tint case 03 runs on.
+   * Its own token rather than a heavier --ink-22, so the hairline borders that
+   * token draws are not dragged along with it.
+   */
+  --ink-watermark: rgba(26, 24, 20, 0.48);
+  --gutter: clamp(18px, 4vw, 54px);
+  /*
+   * What the sticky bar occupies, so anchored scrolls land under it instead of
+   * behind it. A token rather than a number repeated in two files, because the
+   * bar is not one height any more: it grows a line on a phone, where the mark
+   * and the discipline drop under the name. See DesignNav.module.css.
+   */
+  --nav-h: 56px;
+  /*
+   * The air between one full-bleed band and the next: render frames, beat rows,
+   * panel strips. Consecutive bands that each draw their own 2px rule butt
+   * together on purpose; this is for where a framed exhibit meets a new section.
+   */
+  --band-gap: clamp(28px, 3.6vw, 44px);
+  /*
+   * The left edge inside a divided cell: beats, closing panels. Narrower than
+   * --gutter, so any label heading such a row has to sit on this instead or it
+   * hangs out to the right of the headings it is meant to introduce.
+   */
+  --panel-inset: clamp(18px, 3vw, 34px);
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  /*
+   * clip, not hidden. `hidden` would make this a scrollport and trap DesignNav's
+   * position: sticky inside it; `clip` clips without creating a scroll container,
+   * so the nav still sticks to the viewport. Naming only the x axis keeps y
+   * visible, which `hidden` would not allow either.
+   *
+   * This is a backstop, not a licence: anything that overflows still gets fixed
+   * at the source. It is here so one escaping tooltip can never hand the whole
+   * page a horizontal scrollbar again.
+   */
+  overflow-x: clip;
+  /*
+   * A word too long for its box wraps inside it instead of running out the side
+   * and painting over whatever is next. break-word, not anywhere: it only breaks
+   * a word that would otherwise overflow, so ordinary copy is untouched and only
+   * the case that was already broken changes.
+   *
+   * A backstop, not a licence. A box too narrow for its label still gets fixed
+   * where it is set, the way .stats did. This is here so the failure mode is a
+   * word on two lines rather than two words on top of each other.
+   */
+  overflow-wrap: break-word;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-archivo), Archivo, system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.root ::selection {
+  background: rgba(31, 62, 194, 0.22);
+}
+
+.root :focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.root h1,
+.root h2,
+.root h3,
+.root h4 {
+  font-weight: 800;
+}
+
+/* --- skip link ---------------------------------------------------------- */
+
+/*
+ * Parked above the viewport rather than hidden. display:none and
+ * visibility:hidden both take an element out of the tab order, which for this
+ * one control means deleting it: it exists to be reached by the first Tab and
+ * by nothing else.
+ *
+ * Fixed, so it is pinned to the viewport wherever the reader has scrolled to
+ * when they Tab. Inset 8px rather than flush to the corner so the focus ring
+ * has somewhere to draw; the transform clears its own height plus that inset.
+ */
+.skipLink {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  /* Above the sticky bar (20) and the open nav panel (31). */
+  z-index: 40;
+  transform: translateY(calc(-100% - 16px));
+  padding: 12px 18px;
+  background: var(--blue);
+  color: var(--paper);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease);
+}
+
+/*
+ * :focus, not :focus-visible. A screen reader moving focus here without a key
+ * press still needs the link on screen for the sighted person next to it.
+ */
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+/* The site's blue focus ring would be invisible on the site's blue fill. */
+.skipLink:focus-visible {
+  outline-color: var(--paper);
+}
+
+/*
+ * The skip link's target. tabIndex={-1} is what makes the jump move focus and
+ * not just the scroll position, and it is why this rule exists: focused
+ * programmatically, <main> would otherwise draw the site's 2px ring around the
+ * entire page, which reads as an error state rather than as focus.
+ *
+ * Suppressing it is not a 2.4.7 failure. That criterion asks for a visible
+ * indicator on what a keyboard can operate; this is a destination, out of the
+ * tab order and not operable. The control that was operated, the skip link, has
+ * its own ring above.
+ */
+.main:focus {
+  outline: none;
+}
+
+/*
+ * The same allowance every .section makes, and this one needs it more: <main>
+ * begins exactly where the sticky bar ends, so an unadjusted jump lands its top
+ * edge under the bar. On a phone that is 74px of bar over 46px of hero padding,
+ * which eats the kicker.
+ */
+.main {
+  scroll-margin-top: var(--nav-h);
+}
+
+/* --- scroll reveal ------------------------------------------------------ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.8s var(--ease),
+    transform 0.8s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.revealRule {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.9s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.revealIn.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.revealIn.revealRule {
+  transform: scaleX(1);
+}
+
+/* Paired with the attribute rules below; see globals.css for why it is two blocks. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .revealRule {
+    transform: scaleX(1);
+  }
+}
+
+:root[data-motion="off"] .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+:root[data-motion="off"] .revealRule {
+  transform: scaleX(1);
+}
+
+/* --- layout primitives -------------------------------------------------- */
+
+.gutter {
+  padding-inline: var(--gutter);
+}
+
+.rule {
+  height: 2px;
+  background: var(--rule);
+}
+
+/* The nav grows a line on a phone, so both of these turn with it. */
+@media (max-width: 720px) {
+  .root {
+    --nav-h: 74px;
+  }
+}
+
+.section {
+  scroll-margin-top: var(--nav-h);
+}
+
+.grid {
+  display: grid;
+}
+
+/* --- type primitives ---------------------------------------------------- */
+
+.kicker {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ochre-ink);
+}
+
+.kickerTight {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: var(--ochre-ink);
+}
+
+.kickerMuted {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.lede {
+  margin: 0;
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 1.65;
+  color: var(--ink-80);
+  text-wrap: pretty;
+}
+
+.note {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+/* --- case study heading ------------------------------------------------- */
+
+.studyHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 16px;
+  padding: clamp(44px, 6vw, 84px) var(--gutter) 0;
+}
+
+.studyNumber {
+  font-size: clamp(48px, 8vw, 110px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--ink-watermark);
+}
+
+.studyTitle {
+  margin: 0;
+  font-size: clamp(30px, 5.2vw, 68px);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.studyBody {
+  padding: clamp(12px, 1.6vw, 20px) var(--gutter) clamp(28px, 3.6vw, 44px);
+}
+
+/* --- meta list ---------------------------------------------------------- */
+
+.metaList {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--hair);
+  padding-top: 9px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.metaKey {
+  color: var(--ink-muted);
+}
+
+.metaValue {
+  text-align: right;
+}
+
+/*
+ * Stacked on a phone. The role row now runs to a dozen words, and holding it
+ * right-aligned beside its label squeezes both into half the screen and ragged
+ * on the wrong edge. Label over value reads as a list instead.
+ */
+@media (max-width: 640px) {
+  .metaRow {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .metaValue {
+    text-align: left;
+  }
+}
+
+/* --- beats -------------------------------------------------------------- */
+
+.beats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.beat {
+  padding: clamp(22px, 2.6vw, 32px) clamp(18px, 3vw, 34px);
+}
+
+/*
+ * Both rules, always. The right one divides columns, the bottom one divides
+ * rows, and which of the two a reader actually sees is decided by the column
+ * count auto-fit settles on rather than by anything the markup knows. Drawing
+ * only the right rule left the beats running into each other with no divider at
+ * all the moment the grid stacked, which is every phone. Drawing both is correct
+ * at one column and at four.
+ *
+ * The trailing rules, right and bottom, are the band's problem. See
+ * .dividedBand.
+ */
+.beatDivided {
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+/*
+ * The two halves of the divided-grid trick, named here because three studies
+ * were each spelling out the same paragraph.
+ *
+ * The band clips; the grid hangs a pixel over the band's right and bottom edges,
+ * so whichever cells land in the last column and the last row have their
+ * trailing rules fall outside and disappear. Skipping the rule on the last child
+ * instead only works when the column count divides the item count, and under
+ * auto-fit it does not: three cells in two columns leaves one drawing a hairline
+ * into open paper.
+ *
+ * clip, not hidden, for the reason .root gives above.
+ *
+ * The invariant that is invisible in the code: the band must carry a bottom
+ * border or bottom padding. With neither, the grid's negative bottom margin
+ * collapses out through the band and takes a pixel off whatever follows.
+ */
+.dividedBand {
+  overflow: clip;
+}
+
+.dividedGrid {
+  margin-right: -1px;
+  margin-bottom: -1px;
+}
+
+/* The three case studies give their beats slightly more room as they go. */
+.beatMedium {
+  padding: clamp(24px, 3vw, 38px) clamp(18px, 3.2vw, 36px);
+}
+
+.beatRoomy {
+  padding: clamp(26px, 3.4vw, 44px) clamp(18px, 3.4vw, 40px);
+}
+
+.beatTitle {
+  margin-top: 10px;
+  font-size: clamp(19px, 1.8vw, 24px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.beatTitleMedium {
+  font-size: clamp(19px, 1.9vw, 25px);
+  line-height: 1.14;
+}
+
+.beatTitleRoomy {
+  font-size: clamp(20px, 2vw, 27px);
+  line-height: 1.14;
+}
+
+.beatBody {
+  margin: 9px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-75);
+}
+
+.beatBodyMedium {
+  margin-top: 10px;
+}
+
+/* --- metrics ------------------------------------------------------------ */
+
+/*
+ * Built exactly like .beats: equal auto-fit columns, no gap, and --panel-inset
+ * inside each cell. That is what makes a figure land under the beat title above
+ * it. A padded strip with a gap instead cannot line up, because its columns are
+ * narrowed by the gap while the beats' are not.
+ */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.metric {
+  padding: clamp(22px, 2.6vw, 30px) var(--panel-inset);
+}
+
+.metricValue {
+  font-size: clamp(30px, 3.6vw, 46px);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--blue);
+}
+
+/*
+ * The standout metric, carried by the figure alone now that the cell is not
+ * filled. --ochre-ink, not --ochre: the fill colour manages 2.3:1 on paper and
+ * fails even the large-text floor, which is a poor look on a page that claims
+ * accessibility was built in. This is the same ochre, at the weight that reads.
+ */
+.metricValueAccent {
+  color: var(--ochre-ink);
+}
+
+.metricArrow {
+  color: var(--ink-muted);
+}
+
+.metricPlaceholder {
+  display: inline-block;
+  padding: 2px 10px;
+  border: 1px dashed var(--ochre-ink);
+  font-size: clamp(24px, 2.6vw, 34px);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--ochre-ink);
+}
+
+.metricLabel {
+  margin-top: 7px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-muted);
+}
+
+/* --- mock frames -------------------------------------------------------- */
+
+.frame {
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+
+.frameHeader {
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--ink);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+}
+
+.frameHeaderAccent {
+  background: var(--ochre);
+  color: var(--ink);
+}
+
+/* --- links -------------------------------------------------------------- */
+
+.link {
+  color: var(--blue);
+}
+
+.link:hover {
+  color: var(--ochre-ink);
+}
+
+.underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s var(--ease);
+}
+
+.underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}

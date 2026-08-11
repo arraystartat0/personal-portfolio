@@ -1,0 +1,426 @@
+/*
+ * A render of the shipped site, with the client's own tokens and measurements
+ * taken from their stylesheet rather than eyeballed from a screenshot. Pills
+ * and rounded corners are deliberate: this is someone else's visual language,
+ * so the design site's hard-edge rule does not apply inside it.
+ *
+ * Type is scaled to roughly 0.64 of the live site, which is the ratio between
+ * its 66px hero h1 and the 42px this render tops out at. Every size below is
+ * the real value through that same factor, so the hierarchy stays theirs.
+ */
+.site {
+  --bp-green: #acd04d;
+  --bp-green-tint: #d6e8a6;
+  --bp-blue: #2e368f;
+  --bp-night: #0e1230;
+
+  /*
+   * The render reflows on its own width, not the viewport's, for the reason the
+   * sales renders do: this sits inside a frame whose width is the page's only by
+   * coincidence, and a viewport query here would be describing the wrong box.
+   *
+   * Type in here runs at roughly 0.64 of the live site, so the live header's
+   * 992px collapse lands at about 620 in these coordinates.
+   */
+  container: bp-site / inline-size;
+  position: relative;
+  /* clip, not hidden, per .root: the menu sheet parks below the bottom edge and
+     must not hang out into the study around it. */
+  overflow: clip;
+  background: var(--bp-night);
+  font-family: var(--font-poppins), system-ui, sans-serif;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 17px;
+  padding: 7px 14px;
+  background: var(--bp-blue);
+  font-size: 9px;
+  line-height: 1.4;
+  color: #fff;
+}
+
+.hours {
+  margin-left: auto;
+  opacity: 0.9;
+}
+
+/*
+ * The live header is rgba(255,255,255,.86) with a backdrop blur, but it sits in
+ * flow over a white page, so it resolves to white. Flat white here reproduces
+ * what you see without a blur that has nothing behind it to blur.
+ */
+/*
+ * Deliberately not positioned. The menu sheet is a DOM child of this bar but has
+ * to hang off the whole render, and a position: relative here would make this
+ * its containing block instead. That is also what put the first version of the
+ * panel in the same stacking context as .heroBody, which carries z-index: 3 and
+ * printed the headline straight through it.
+ */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 14px;
+  background: #fff;
+  border-bottom: 1px solid #eef0f5;
+}
+
+.logo {
+  padding: 8px;
+  border: 1px dashed rgba(32, 36, 46, 0.35);
+  color: rgba(32, 36, 46, 0.55);
+  font-size: 8.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.nav {
+  display: flex;
+  gap: 19px;
+  margin-left: 9px;
+  font-size: 9.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #20242e;
+}
+
+.headerActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.contact {
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--bp-blue);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 50rem;
+  background: var(--bp-green);
+  color: #20242e;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+  box-shadow: 0 5px 14px -5px rgba(172, 208, 77, 0.85);
+}
+
+/* --- the header on a phone -------------------------------------------------- */
+
+/* Not rendered at all above the collapse, the same as the live toggler. */
+.menuBtn {
+  display: none;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: #f1f2f5;
+  color: #20242e;
+  cursor: pointer;
+}
+
+/*
+ * Both of these sit against .site rather than the bar, which is what makes the
+ * z-index work: .site is a containing block and a stacking context already,
+ * because container-type brings layout containment with it. Numbers well clear
+ * of .heroBody's 3, so the sheet cannot be printed through again.
+ */
+.menuScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: rgba(14, 18, 48, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.menuScrimOpen {
+  opacity: 1;
+  visibility: visible;
+}
+
+/*
+ * Up from the bottom, and only as tall as it needs to be. A sheet pinned to the
+ * bottom edge puts every link inside the arc a thumb already covers, which is
+ * the argument for the pattern; filling the screen with five items would give
+ * that up for nothing.
+ *
+ * visibility rather than display, transitioning alongside the transform: opening
+ * flips it at once so the slide up is seen, closing holds it visible for the
+ * whole 300ms so the slide down is seen too.
+ *
+ * No prefers-reduced-motion block, and the absence is the surprising part: these
+ * are transitions to a declared state, and globals.css already cuts every
+ * duration to 0.001ms, so a reduced-motion reader lands straight on the sheet,
+ * open and in place.
+ */
+.menuSheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 21;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 10px;
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -14px 34px -18px rgba(14, 18, 48, 0.75);
+  visibility: hidden;
+  transform: translateY(100%);
+  transition:
+    transform 0.3s var(--ease),
+    visibility 0.3s var(--ease);
+}
+
+.menuSheetOpen {
+  visibility: visible;
+  transform: none;
+}
+
+/* The grab handle every sheet carries. Drawn, not draggable: this is a render. */
+.menuGrip {
+  width: 32px;
+  height: 3px;
+  margin: 8px auto 4px;
+  border-radius: 50rem;
+  background: #d8dae2;
+}
+
+.menuLink {
+  padding: 11px 16px;
+  border-top: 1px solid #eef0f5;
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #20242e;
+}
+
+.menuLinkAccent {
+  font-weight: 600;
+  color: var(--bp-blue);
+}
+
+@container bp-site (max-width: 620px) {
+  .menuBtn {
+    display: grid;
+  }
+
+  /* Both move into the sheet. The quote button stays where a thumb can reach it. */
+  .nav,
+  .contact {
+    display: none;
+  }
+}
+
+.ctaHero {
+  padding: 10px 19px;
+  font-size: 11px;
+  box-shadow: 0 9px 22px -6px rgba(172, 208, 77, 0.9);
+}
+
+.ctaGhost {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50rem;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 14px 24px;
+  background: var(--bp-night);
+}
+
+/*
+ * The photograph runs at 55% over the night blue, exactly as shipped. It carries
+ * no meaning here, which is why it is aria-hidden and its alt is empty: the two
+ * washes above it are most of what you actually see.
+ *
+ * An <img> rather than a background, and not for semantics. A CSS url() is
+ * invisible to next/image, so this was shipping a 388KB JPEG at full size to
+ * every visitor, decoded and then held at 55% opacity behind two gradients.
+ * Through next/image it is resized, re-encoded to AVIF or WebP, and lazy by
+ * default, which for a photograph this far down the page is most of the point.
+ */
+.heroPhoto {
+  object-fit: cover;
+  opacity: 0.55;
+}
+
+.heroWash {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(14, 18, 48, 0.94) 0%,
+    rgba(20, 26, 70, 0.78) 42%,
+    rgba(14, 18, 48, 0.35) 100%
+  );
+}
+
+/* The lime bloom off the top-right corner, scaled from the shipped 420px. */
+.heroGlow {
+  position: absolute;
+  top: -76px;
+  right: -51px;
+  width: 267px;
+  height: 267px;
+  background: radial-gradient(circle, rgba(172, 208, 77, 0.35), transparent 68%);
+  filter: blur(6px);
+}
+
+.heroBody {
+  position: relative;
+  z-index: 3;
+}
+
+.eyebrow {
+  /* Tighter than the pill needed: without its padding and border the line sat
+     too far off the headline, and the underline pushes the gap further still. */
+  margin-bottom: 8px;
+  font-size: 8.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  color: #dbe9b0;
+  /* Underlines the phrase only, not the full block width, now that the pill
+     no longer draws the bounds of the line. */
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.headline {
+  max-width: 15ch;
+  font-size: clamp(26px, 3.4vw, 42px);
+  font-weight: 800;
+  line-height: 1.03;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.headlineAccent {
+  color: var(--bp-green);
+}
+
+.tagline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 2px;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--bp-green-tint);
+}
+
+.taglineRule {
+  width: 22px;
+  height: 2px;
+  flex: none;
+  border-radius: 2px;
+  background: var(--bp-green);
+}
+
+.lead {
+  margin-top: 8px;
+  max-width: 56ch;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: #c9cde3;
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+/*
+ * Wrapping flex, not a two-column grid: the live strip caps at 660px and lets
+ * three items break two-up then one. A fixed grid would hold that shape at the
+ * wrong widths and lose it at the right ones.
+ */
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px 24px;
+  max-width: 420px;
+  margin-top: 30px;
+  padding-top: 19px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Stands in for the shipped Font Awesome glyph without pretending to be one. */
+.featureMark {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: 3px;
+  background: rgba(172, 208, 77, 0.18);
+  box-shadow: inset 0 0 0 1px var(--bp-green);
+}
+
+.featureTitle {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.featureBody {
+  font-size: 8px;
+  line-height: 1.4;
+  color: #9fa4c4;
+}
+
+.whatsapp {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 37px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  font-size: 17px;
+  line-height: 1;
+  box-shadow: 0 9px 22px -6px rgba(37, 211, 102, 0.9);
+}

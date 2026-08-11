@@ -1,0 +1,126 @@
+.term {
+  position: relative;
+  display: inline-block;
+}
+
+/*
+ * Dotted, then solid on hover: the dotted rule is the standing affordance that
+ * says a definition is here, and solidifying it confirms the hover landed
+ * without moving anything on the line.
+ */
+.trigger {
+  cursor: help;
+  font-weight: 700;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--ochre-ink);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s var(--ease);
+}
+
+.term:hover .trigger,
+.trigger:focus-visible {
+  text-decoration-style: solid;
+  text-decoration-color: var(--ochre);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--ochre-ink);
+  outline-offset: 2px;
+}
+
+/*
+ * Ink fill rather than the usual paper-and-2px-rule: this floats over body copy
+ * it must not be confused with, and the design site's framed artifacts are all
+ * paper. An overlay reads as an overlay.
+ *
+ * Left-aligned to the word, not centred, so it grows away from the term in one
+ * predictable direction.
+ */
+.tip {
+  /*
+   * Named because two rules depend on it: the tip stands this far off the word,
+   * and the bridge below is exactly this tall. Drifting apart would reopen the
+   * gap the bridge exists to close, and nothing on screen would say why.
+   */
+  --tip-gap: 8px;
+  position: absolute;
+  bottom: calc(100% + var(--tip-gap));
+  /*
+   * Anchored to the word, then pulled back inside the screen by --tip-shift,
+   * which Term writes after measuring where the box actually landed. Zero until
+   * it does, so the tip opens from the word's left edge whenever it fits, which
+   * is nearly always: the shift is a correction, not the layout.
+   */
+  left: var(--tip-shift, 0px);
+  z-index: 5;
+  width: max-content;
+  /* Wide enough to read, never wider than the screen it has to fit in. */
+  max-width: min(260px, calc(100vw - 24px));
+  padding: 9px 11px;
+  background: var(--ink);
+  color: var(--paper);
+  border-top: 2px solid var(--ochre);
+  font-size: 11.5px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(4px);
+  /*
+   * Off by default and only on once shown, which is not a detail. Every tip on
+   * the page is in the DOM at all times, so a tip that took the pointer while
+   * invisible would put a few hundred silent boxes over the copy, swallowing
+   * clicks on the links underneath them.
+   */
+  pointer-events: none;
+  transition:
+    opacity 0.22s var(--ease),
+    transform 0.22s var(--ease);
+}
+
+/*
+ * The gap sits outside .term's box, so a pointer travelling from the word up to
+ * the tip crosses ground neither element owns, :hover drops, and the tip it was
+ * reaching for is gone before it lands. This bridges that strip, which is what
+ * makes the tip hoverable at all. A child of .tip, so hovering it still matches
+ * .term:hover, and it inherits pointer-events from .tip, so it is inert on
+ * exactly the tips that are hidden.
+ *
+ * Inset to the tip's own width rather than given any of its own: .root clips
+ * horizontal overflow because an escaping tooltip once handed the page a
+ * scrollbar, and nothing here should be able to reach past the box that is
+ * already measured and pulled back inside the screen.
+ */
+.tip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: var(--tip-gap);
+}
+
+/*
+ * Opacity rather than visibility or display, so the tip stays in the
+ * accessibility tree and aria-describedby can still reach it while hidden.
+ */
+.term:hover .tip,
+.term:focus-within .tip {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/*
+ * Escape, via the attribute Term writes. It has to override a :hover or a
+ * :focus-within that is still true, because 1.4.13 asks to be rid of the tip
+ * without moving either. Both selectors weigh (0,3,0), so this wins only on
+ * source order: it must stay below the reveal above.
+ */
+.term[data-dismissed] .tip {
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+}

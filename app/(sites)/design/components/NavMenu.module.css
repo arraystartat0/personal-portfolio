@@ -1,0 +1,173 @@
+/*
+ * The nav's mobile half. Hidden entirely from --nav-collapse up, where
+ * DesignNav's own row of links takes over.
+ */
+.root {
+  display: none;
+  margin-left: auto;
+}
+
+@media (max-width: 720px) {
+  .root {
+    display: block;
+  }
+}
+
+/* Applied to <html> while the panel is open, so the page cannot scroll under it. */
+.lock {
+  overflow: hidden;
+}
+
+/* --- the button ----------------------------------------------------------- */
+
+/*
+ * 40px square. The bars are 18px of that; the rest is hit target, because a
+ * control sized to its own ink is a control a thumb misses.
+ */
+.burger {
+  position: relative;
+  display: block;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/*
+ * Three ink bars that fold into an X. Both states are declared, so the
+ * reduced-motion override in globals.css lands on the resolved one rather than
+ * on nothing: the glyph still says which way the control goes, it just says it
+ * instantly.
+ */
+.bar {
+  position: absolute;
+  left: 11px;
+  width: 18px;
+  height: 2px;
+  background: var(--ink);
+  transition:
+    transform 0.3s var(--ease),
+    opacity 0.18s var(--ease);
+}
+
+.bar:nth-child(1) {
+  top: 14px;
+}
+
+.bar:nth-child(2) {
+  top: 19px;
+}
+
+.bar:nth-child(3) {
+  top: 24px;
+}
+
+.burger[data-open] .bar:nth-child(1) {
+  transform: translateY(5px) rotate(45deg);
+}
+
+.burger[data-open] .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.burger[data-open] .bar:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+/* --- scrim and panel ------------------------------------------------------ */
+
+/*
+ * Both of these are position: fixed inside .nav, which is only safe because the
+ * nav paints its blur on a pseudo-element. backdrop-filter on the nav itself
+ * would make it the containing block for every fixed descendant, and the panel
+ * would be trapped inside a 60px bar. See DesignNav.module.css.
+ */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(26, 24, 20, 0.42);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.34s var(--ease),
+    visibility 0.34s var(--ease);
+}
+
+.scrimOpen {
+  opacity: 1;
+  visibility: visible;
+}
+
+/*
+ * visibility rather than display, and it transitions alongside the transform:
+ * opening it flips at once so the slide is seen, closing it holds visible for
+ * the whole 340ms so the slide out is seen too. display would lose both.
+ */
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 31;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: min(320px, 84vw);
+  padding: 78px var(--gutter) var(--gutter);
+  overflow-y: auto;
+  background: var(--paper);
+  border-left: 2px solid var(--ink);
+  visibility: hidden;
+  transform: translateX(100%);
+  transition:
+    transform 0.34s var(--ease),
+    visibility 0.34s var(--ease);
+}
+
+.panelOpen {
+  visibility: visible;
+  transform: none;
+}
+
+/*
+ * Set at the scale of the headings rather than the nav's 13px. This is the only
+ * thing on screen while it is open, and a list of small links floating in a
+ * mostly empty panel reads as a leftover rather than as the menu.
+ */
+.panelLink {
+  padding: 9px 0;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.panelLinkAccent {
+  color: var(--blue);
+}
+
+.panelSwitcher {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 2px solid var(--rule);
+  width: 100%;
+}
+
+.panelSwitchLink {
+  display: inline-block;
+  padding: 7px 11px;
+  border: 1px solid var(--hair);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  text-decoration: none;
+}

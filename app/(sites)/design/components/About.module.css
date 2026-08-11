@@ -1,0 +1,132 @@
+/*
+ * Two cells, so the column count divides the item count at every width and one
+ * rule always falls between them. Counted columns rather than auto-fit so that
+ * rule can turn with the layout: under auto-fit the copy's border-right simply
+ * vanished when the portrait dropped below it, and the two halves ran together.
+ */
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-bottom: 2px solid var(--rule);
+}
+
+.section > * + * {
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .section {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* The same single rule, turned ninety degrees. */
+  .section > * + * {
+    border-top: 0;
+    border-left: 1px solid var(--rule);
+  }
+}
+
+.copy {
+  padding: clamp(38px, 5vw, 72px) var(--gutter);
+}
+
+.kicker {
+  margin-bottom: 18px;
+}
+
+.headline {
+  margin: 0;
+  font-size: clamp(26px, 3.4vw, 44px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  white-space: pre-line;
+}
+
+.paragraph {
+  margin: 20px 0 0;
+  max-width: 52ch;
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.65;
+  color: var(--ink-80);
+  text-wrap: pretty;
+}
+
+.paragraphTight {
+  margin-top: 14px;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.fact {
+  border-top: 1px solid var(--hair);
+  padding-top: 10px;
+}
+
+.factLabel {
+  letter-spacing: 0.1em;
+}
+
+.factLines {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.portraitColumn {
+  padding: clamp(38px, 5vw, 72px) var(--gutter);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* Centred on both axes: the frame is narrower than the column it sits in. */
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+  The photo sits flush inside the 2px rule with no inset, so the rule reads as
+  the edge of one artifact rather than a mount around a smaller picture.
+*/
+/*
+  600px is the photo's own resolution ceiling, not a taste call: the source is
+  1218px wide, so beyond 600 CSS px a 2x screen has to stretch it. Widen this
+  only when a larger source photo replaces the current one.
+
+  It has to be `width`, not `max-width`. The column centres its children, which
+  makes their width content-driven, and the image inside is absolutely
+  positioned and so contributes no width at all: a max-width would collapse the
+  frame to nothing.
+
+  `flex: 1` takes the height the copy column sets, and no aspect-ratio is
+  declared, deliberately. A fixed ratio would report a content height to the
+  grid taller than the copy's, and the photo would start driving the section
+  instead of answering to it. The min-height is the floor for the one case
+  where `flex: 1` has nothing to grow into: the single-column layout, where the
+  column is only as tall as the frame itself.
+*/
+.portrait {
+  position: relative;
+  width: min(100%, 600px);
+  flex: 1;
+  min-height: 420px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.portraitImage {
+  object-fit: cover;
+  /*
+    Anchored to the top so the crop always comes off the bottom of the frame.
+    The head sits near the top edge of the photo, so a centred crop shaves it
+    at wide viewports; losing the foot of a torso is the harmless direction.
+  */
+  object-position: center top;
+  /* Flat and monochrome, so it belongs to the ink-and-paper palette. */
+  filter: grayscale(1);
+}

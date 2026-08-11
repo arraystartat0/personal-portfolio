@@ -1,0 +1,101 @@
+/*
+ * A real superscript, set by hand. vertical-align: super would also shift the
+ * line box and open the leading on whichever line happens to carry a marker.
+ */
+.cite {
+  position: relative;
+  top: -0.4em;
+  margin-left: 2px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.cite:hover,
+.cite:focus-visible {
+  text-decoration: underline;
+}
+
+.cite + .cite {
+  margin-left: 3px;
+}
+
+/*
+ * No rule of its own. The list is banded by 2px section rules wherever it is
+ * placed, and a hairline immediately under one of those just reads as a smudge.
+ */
+.sources {
+  margin-top: 0;
+}
+
+.sourceList {
+  counter-reset: source;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 7px;
+}
+
+/*
+ * Deliberately a step below the copy it supports. A reference is there to be
+ * checked, not read through, and holding it at body size would give the
+ * citations the same weight on the page as the claims they back.
+ */
+.source {
+  display: flex;
+  gap: 9px;
+  align-items: baseline;
+  counter-increment: source;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.source::before {
+  content: counter(source);
+  flex: none;
+  width: 14px;
+  font-weight: 800;
+  color: var(--blue);
+}
+
+/* min-width: 0 so a long title can wrap instead of widening the row. */
+.sourceText {
+  min-width: 0;
+}
+
+/*
+ * Scrolled-to references land under the sticky header, not behind it, and clear
+ * of it by a comfortable margin rather than flush against its rule. --nav-h
+ * carries the bar's own height, which is not a constant: it grows a line on a
+ * phone.
+ */
+.source:target {
+  scroll-margin-top: calc(var(--nav-h) + 34px);
+  color: var(--ink-80);
+}
+
+.publication {
+  font-style: italic;
+}
+
+/*
+ * Underlined at rest, not on hover. These sit at the end of a sentence of
+ * citation text, so colour was the only thing separating link from prose, and
+ * SC 1.4.1 does not accept colour as the only channel. Hover thickens it rather
+ * than introducing it.
+ */
+.sourceLink {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+.sourceLink:hover,
+.sourceLink:focus-visible {
+  text-decoration-thickness: 2px;
+}

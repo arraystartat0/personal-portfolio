@@ -1,0 +1,164 @@
+.root {
+  margin-top: clamp(16px, 2vw, 22px);
+}
+
+/* Opening its band, not following something in it. */
+.root:first-child {
+  margin-top: 0;
+}
+
+/*
+ * The marker is removed twice by hand. ::marker is the standard, WebKit still
+ * wants its own pseudo-element, and postcss loads only @tailwindcss/postcss, so
+ * nothing is going to write the prefixed one for us.
+ *
+ * display: flex also suppresses the marker in older WebKit as a side effect, but
+ * that is a coincidence rather than a rule, and coincidences stop being true.
+ */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 14px;
+  cursor: pointer;
+  list-style: none;
+  /* Anchors inside a closed panel open it, and land under the sticky bar. */
+  scroll-margin-top: calc(var(--nav-h) + 34px);
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary::marker {
+  content: "";
+}
+
+.summaryText {
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+/*
+ * The word, not the chevron alone. A bare glyph asks the reader to know what
+ * this site means by it; two words and a glyph asks nothing.
+ */
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/*
+ * The one thing that moves. Both ends are declared states, so the reduced-motion
+ * override in globals.css lands on the resolved one: the chevron still points
+ * the way the panel went, it just gets there instantly.
+ */
+.chevron {
+  display: block;
+  transition: transform 0.24s var(--ease);
+}
+
+.root[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.body {
+  margin-top: 11px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/*
+ * Typed here rather than at the call sites: the two provenance notes are the
+ * same kind of thing said twice, and the second one is bullets only because its
+ * claims are separable. Both should look like one component either way.
+ */
+.body > p {
+  margin: 0;
+}
+
+.body > p + p {
+  margin-top: 9px;
+}
+
+.body > ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * A square, not a disc. It is the same mark as the nav's, and it is the one
+ * shape this sheet allows: nothing else on the design site is round.
+ */
+.body > ul > li {
+  position: relative;
+  padding-left: 15px;
+}
+
+.body > ul > li::before {
+  content: "";
+  position: absolute;
+  top: 0.55em;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  background: var(--ochre-ink);
+}
+
+/* --- tones ---------------------------------------------------------------- */
+
+/*
+ * The ochre note: a hard 2px border and a wash of the same colour, which is what
+ * the two provenance boxes carried before they folded. Kept exactly, so a reader
+ * who has seen one on another study still recognises it closed.
+ */
+.ochre {
+  padding: 13px 16px;
+  border: 2px solid var(--ochre);
+  background: rgba(217, 148, 20, 0.14);
+}
+
+.ochre .hint {
+  color: var(--ochre-ink);
+}
+
+.ochre .body {
+  padding-top: 11px;
+  border-top: 1px solid rgba(217, 148, 20, 0.5);
+}
+
+/*
+ * No box at all. This wraps the source list, which sits inside a band that is
+ * already ruled top and bottom; a second frame inside it would read as a smudge,
+ * the same reason .sources draws no rule of its own.
+ */
+.plain .summaryText {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+
+.plain .hint {
+  color: var(--ink-muted);
+}
+
+.plain:hover .hint,
+.summary:focus-visible .hint {
+  color: var(--blue);
+}

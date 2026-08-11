@@ -1,0 +1,132 @@
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2.4vw, 26px);
+  padding: 14px var(--gutter);
+  border-bottom: 2px solid var(--rule);
+}
+
+/*
+ * The translucent blur is painted by a pseudo-element, not by the bar itself,
+ * and that is load-bearing rather than fussy: backdrop-filter on an element
+ * makes it the containing block for every position: fixed descendant, and
+ * NavMenu's panel is fixed. On the bar, the panel would be trapped inside a
+ * 60px strip instead of covering the viewport.
+ *
+ * z-index: -1 inside the bar's own stacking context, which .nav already has from
+ * its z-index, so it paints behind the links without needing a wrapper.
+ */
+.nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(245, 242, 234, 0.94);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.identity {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2.4vw, 26px);
+  min-width: 0;
+}
+
+.brand {
+  font-size: clamp(14px, 1.6vw, 17px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.disciplineRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mark {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  background: var(--blue);
+}
+
+.discipline {
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ink-muted);
+}
+
+.links {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(12px, 2vw, 24px);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.link {
+  color: var(--ink);
+}
+
+.linkAccent {
+  color: var(--blue);
+}
+
+.switcher {
+  display: flex;
+  gap: 8px;
+}
+
+.switchLink {
+  padding: 5px 9px;
+  border: 1px solid var(--hair);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition:
+    color 0.25s var(--ease),
+    border-color 0.25s var(--ease);
+}
+
+.switchLink:hover {
+  color: var(--blue);
+  border-color: var(--blue);
+}
+
+/*
+ * Below this the row of links goes behind NavMenu's hamburger, and the identity
+ * block turns: the name on one line, the mark and the discipline on the next.
+ * Both are then legible at 320px, which is what the old rule gave up on when it
+ * deleted the discipline outright.
+ *
+ * The bar gets taller here, and --nav-h on .root turns at the same width so
+ * every anchor on the page keeps landing under it rather than behind it.
+ */
+@media (max-width: 720px) {
+  .nav {
+    align-items: flex-start;
+    padding: 12px var(--gutter);
+  }
+
+  .identity {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+  }
+
+  .links {
+    display: none;
+  }
+}

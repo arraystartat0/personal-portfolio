@@ -1,0 +1,489 @@
+/*
+ * The hub is the cover, not one of the books. It runs dark and quiet so the
+ * three sites it opens onto can each be loud in their own way.
+ */
+.root {
+  --ink: #0a0a0c;
+  --text: #edebe6;
+  --muted: rgba(237, 235, 230, 0.6);
+  /*
+   * 0.38 measured 3.13:1 on this near-black, which carries large text and
+   * nothing else, and every one of its eleven uses is 10 to 12px. Off-white
+   * needs 0.49 here to clear 4.5:1; 0.52 sits at 4.95 and keeps a visible step
+   * down from --muted at 6.28.
+   */
+  --faint: rgba(237, 235, 230, 0.52);
+  --hair: rgba(237, 235, 230, 0.13);
+  --gutter: clamp(20px, 5vw, 72px);
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  overflow: clip;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+.root ::selection {
+  background: rgba(237, 235, 230, 0.22);
+}
+
+/* --- backdrop ----------------------------------------------------------- */
+
+/* Three washes, one per discipline, so the page hints at its contents. */
+.glow {
+  position: absolute;
+  z-index: -2;
+  inset: -30% -5% auto;
+  height: 85vh;
+  background:
+    radial-gradient(46% 62% at 16% 34%, rgba(224, 162, 51, 0.2), transparent 70%),
+    radial-gradient(44% 60% at 52% 26%, rgba(96, 140, 255, 0.2), transparent 70%),
+    radial-gradient(44% 62% at 86% 34%, rgba(63, 201, 138, 0.16), transparent 70%);
+  filter: blur(30px);
+}
+
+.mesh {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(237, 235, 230, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(237, 235, 230, 0.05) 1px, transparent 1px);
+  background-size: 76px 76px;
+  -webkit-mask-image: radial-gradient(120% 70% at 50% 0%, #000 5%, transparent 78%);
+  mask-image: radial-gradient(120% 70% at 50% 0%, #000 5%, transparent 78%);
+}
+
+/* --- top bar ------------------------------------------------------------ */
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 20px var(--gutter);
+  border-bottom: 1px solid var(--hair);
+}
+
+.mark {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid rgba(237, 235, 230, 0.3);
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.wordmark {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.topbarMeta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.available {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+}
+
+/* --- hero --------------------------------------------------------------- */
+
+.hero {
+  padding: clamp(56px, 11vw, 132px) var(--gutter) clamp(44px, 7vw, 84px);
+}
+
+.kicker {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* Sized so the longer of the two lines still clears the gutters at max scale. */
+.headline {
+  margin: clamp(22px, 3vw, 34px) 0 0;
+  font-size: clamp(34px, 6vw, 76px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+/* Breaking the clause by hand keeps it a deliberate two-line lockup. */
+.headlineTail {
+  display: block;
+  color: var(--faint);
+}
+
+.intro {
+  margin: clamp(24px, 3vw, 34px) 0 0;
+  max-width: 62ch;
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.7;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.cue {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: clamp(30px, 4vw, 48px);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.cueRule {
+  height: 1px;
+  width: clamp(40px, 8vw, 92px);
+  background: linear-gradient(90deg, rgba(237, 235, 230, 0.4), transparent);
+}
+
+/* --- the three rows ----------------------------------------------------- */
+
+.list {
+  border-top: 1px solid var(--hair);
+}
+
+.row {
+  position: relative;
+  display: grid;
+  isolation: isolate;
+  gap: clamp(14px, 2vw, 24px);
+  padding: clamp(30px, 4vw, 46px) var(--gutter);
+  border-bottom: 1px solid var(--hair);
+  color: inherit;
+  text-decoration: none;
+}
+
+/* The accent edge and wash both key off --accent, set per row from the data. */
+.row::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto -1px 0;
+  width: 2px;
+  background: rgb(var(--accent));
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform 0.45s var(--ease);
+}
+
+.row::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgb(var(--accent) / 0.13),
+    rgb(var(--accent) / 0.03) 46%,
+    transparent 74%
+  );
+  opacity: 0;
+  transition: opacity 0.45s var(--ease);
+}
+
+.row:hover::before,
+.row:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.row:hover::after,
+.row:focus-visible::after {
+  opacity: 1;
+}
+
+@media (min-width: 900px) {
+  .row {
+    /*
+     * The discipline track floors at min-content so a long word ("Embedded")
+     * can never spill into the body column. If the type ever outgrows the
+     * clamp, the track widens instead of the text colliding.
+     */
+    grid-template-columns:
+      3.25rem
+      minmax(min-content, clamp(11rem, 20vw, 18rem))
+      minmax(0, 1fr)
+      2rem;
+    column-gap: clamp(20px, 2.4vw, 40px);
+    align-items: start;
+  }
+}
+
+.index {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--faint);
+  transition: color 0.35s var(--ease);
+}
+
+@media (min-width: 900px) {
+  .index {
+    padding-top: 0.7em;
+  }
+}
+
+.row:hover .index,
+.row:focus-visible .index {
+  color: rgb(var(--accent));
+}
+
+/* Kept in step with the track above so there is always slack around the word. */
+.discipline {
+  font-size: clamp(28px, 3.6vw, 48px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  transition: color 0.35s var(--ease);
+}
+
+.row:hover .discipline,
+.row:focus-visible .discipline {
+  color: rgb(var(--accent));
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--faint);
+}
+
+.dotLive {
+  background: rgb(var(--accent));
+  animation: pulse 2.4s var(--ease) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(var(--accent) / 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgb(var(--accent) / 0);
+  }
+}
+
+.rowHeadline {
+  font-size: clamp(16px, 1.5vw, 19px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.blurb {
+  margin: 10px 0 0;
+  max-width: 56ch;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.tag {
+  padding: 5px 10px;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  transition:
+    border-color 0.35s var(--ease),
+    color 0.35s var(--ease);
+}
+
+.row:hover .tag,
+.row:focus-visible .tag {
+  border-color: rgb(var(--accent) / 0.42);
+  color: rgba(237, 235, 230, 0.76);
+}
+
+.arrow {
+  font-size: 20px;
+  line-height: 1;
+  color: var(--faint);
+  transition:
+    transform 0.4s var(--ease),
+    color 0.35s var(--ease);
+}
+
+@media (min-width: 900px) {
+  .arrow {
+    justify-self: end;
+    padding-top: 0.5em;
+  }
+}
+
+.row:hover .arrow,
+.row:focus-visible .arrow {
+  transform: translateX(6px);
+  color: rgb(var(--accent));
+}
+
+/* --- footer ------------------------------------------------------------- */
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px 32px;
+  margin-top: auto;
+  padding: clamp(34px, 5vw, 60px) var(--gutter) clamp(30px, 4vw, 46px);
+}
+
+.channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+}
+
+.channel {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.3s var(--ease);
+}
+
+.channel:hover {
+  color: var(--text);
+}
+
+/*
+ * Sits in the channel row and is typed as one of them, because that is what it
+ * is: another thing the page offers, not a settings panel bolted to the corner.
+ *
+ * Nothing like the design site's version of this control, which is a dotted ink
+ * rule on paper. Here it is a hairline capsule in the dark, the same vocabulary
+ * as the discipline tags further up the page.
+ */
+.motion {
+  padding: 4px 11px;
+  /*
+   * 0.4 rather than the hairline the tags use, and the difference is 1.4.11: a
+   * tag is text, but this capsule is the boundary of a control, and the same
+   * alpha that reads as a whisper on a tag lands near 1.4:1 against this
+   * background. 0.4 of the off-white over #0a0a0c clears 3:1.
+   */
+  border: 1px solid rgba(237, 235, 230, 0.4);
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 12px;
+  color: var(--faint);
+  cursor: pointer;
+  transition:
+    color 0.3s var(--ease),
+    border-color 0.3s var(--ease);
+}
+
+.motion:hover {
+  border-color: rgba(237, 235, 230, 0.62);
+  color: var(--text);
+}
+
+/* On is the state that needs reading at a glance, so it takes the brighter ink. */
+.motion[aria-pressed="true"] {
+  border-color: rgba(237, 235, 230, 0.78);
+  color: var(--text);
+}
+
+.copyright {
+  font-size: 12px;
+  color: var(--faint);
+}
+
+/* --- entrance ----------------------------------------------------------- */
+
+.enter {
+  opacity: 0;
+  animation: enter 0.75s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 85ms);
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Paired with the attribute rules below; see globals.css for why it is two blocks. */
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .dotLive {
+    animation: none;
+  }
+}
+
+:root[data-motion="off"] .enter {
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+
+:root[data-motion="off"] .dotLive {
+  animation: none;
+}

@@ -1,0 +1,467 @@
+/*
+ * The product's palette again, scoped here so it cannot leak into the renders
+ * above or the study around it. What differs is scale: the screens above sit at
+ * page size, where 9px type stands in for a paragraph. This is the component,
+ * and every day in it is a hit target a real hand and a real keyboard have to
+ * reach, so the type runs at the size a control is allowed to be.
+ */
+.calendar {
+  --dc-ink: #1b1b1f;
+  --dc-muted: #63636d;
+  --dc-page: #f6f6f8;
+  --dc-card: #ffffff;
+  --dc-hair: #e3e3e8;
+  --dc-line: #c9c9d2;
+  --dc-lime: #acd04d;
+  /* Both clear 3:1 as a fill against white, so the wash is legible on its own. */
+  --dc-closed: #fbe6cf;
+  --dc-closed-ink: #7c3d05;
+  --dc-heavy: #dbe9f5;
+  --dc-heavy-ink: #0b4a70;
+  --dc-radius: 14px;
+  --dc-radius-sm: 9px;
+
+  padding: clamp(14px, 1.8vw, 22px);
+  background: var(--dc-page);
+  color: var(--dc-ink);
+  font-family: var(--font-poppins), system-ui, sans-serif;
+}
+
+/*
+ * Higher specificity than the design site's own :focus-visible, so the ring
+ * belongs to the product rather than to the portfolio around it. Ink rather
+ * than the brand lime: #acd04d manages under 2:1 on white and would be a focus
+ * indicator you cannot see, which is worse than none at all.
+ */
+.calendar button:focus-visible {
+  outline: 2px solid var(--dc-ink);
+  outline-offset: 3px;
+  /*
+   * A light gap punched between the cell's own border and the ring. The arrow
+   * keys move the selection with the focus, so focus now lands on the selected
+   * day every time, and the selected day's border is this same ink: without the
+   * gap the ring reads as the selection getting slightly thicker, which is
+   * indistinguishable from Tab having skipped the grid entirely.
+   */
+  box-shadow: 0 0 0 3px var(--dc-page);
+}
+
+/* Keeps the selected cell's own inset ring while it is the focused one. */
+.day.daySelected:focus-visible {
+  box-shadow:
+    inset 0 0 0 1px var(--dc-ink),
+    0 0 0 3px var(--dc-page);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- head ----------------------------------------------------------------- */
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.title {
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.month {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--dc-muted);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--dc-muted);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  border-radius: 4px;
+  border: 1px solid var(--dc-line);
+}
+
+.swatchClosed {
+  background: var(--dc-closed);
+  border-color: var(--dc-closed-ink);
+}
+
+.swatchHeavy {
+  background: var(--dc-heavy);
+  border-color: var(--dc-heavy-ink);
+}
+
+.swatchOpen {
+  background: var(--dc-card);
+}
+
+/* --- body ----------------------------------------------------------------- */
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: clamp(12px, 1.6vw, 20px);
+  margin-top: 14px;
+}
+
+@media (max-width: 720px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.grid {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 4px;
+  table-layout: fixed;
+}
+
+.caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.weekday {
+  padding-bottom: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dc-muted);
+}
+
+.cell {
+  padding: 0;
+}
+
+.empty {
+  padding: 0;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  width: 100%;
+  min-height: 54px;
+  padding: 6px 7px;
+  border: 1px solid var(--dc-hair);
+  border-radius: var(--dc-radius-sm);
+  background: var(--dc-card);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.day:hover {
+  border-color: var(--dc-line);
+}
+
+.dayClosed {
+  background: var(--dc-closed);
+  border-color: var(--dc-closed-ink);
+}
+
+.dayHeavy {
+  background: var(--dc-heavy);
+  border-color: var(--dc-heavy-ink);
+}
+
+/*
+ * Selection is a 2px ink ring, not a fill. A fill would have to fight the three
+ * condition colours underneath it, and the condition is the more important of
+ * the two things this cell is saying.
+ */
+.daySelected {
+  border-color: var(--dc-ink);
+  box-shadow: inset 0 0 0 1px var(--dc-ink);
+}
+
+.dayNumber {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.dayToday .dayNumber {
+  color: var(--dc-ink);
+}
+
+.todayMark {
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: var(--dc-lime);
+  font-size: 8.5px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+/*
+ * Wrapping, because on a narrow column a busy day carries three things at once:
+ * the truck, the load and an absorbed count. Held on one line they pushed the
+ * "+14" out past the cell and over the day beside it.
+ */
+.dayState {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 4px;
+  min-width: 0;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.load {
+  color: var(--dc-muted);
+}
+
+.loadGlyph {
+  color: var(--dc-muted);
+}
+
+.closedMark {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dc-closed-ink);
+}
+
+.absorbMark {
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--dc-heavy-ink);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* --- panel ---------------------------------------------------------------- */
+
+.panel {
+  min-width: 0;
+  padding: clamp(12px, 1.4vw, 16px);
+  border-radius: var(--dc-radius);
+  background: var(--dc-card);
+}
+
+.panelDate {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+/*
+ * Visible and live at once. A summary only a screen reader hears is a summary
+ * the sighted keyboard user has to infer from three separate blocks below it.
+ */
+.status {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dc-muted);
+}
+
+.holiday {
+  margin-top: 11px;
+  padding: 10px 11px;
+  border-radius: var(--dc-radius-sm);
+  background: var(--dc-closed);
+}
+
+.holidayName {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--dc-closed-ink);
+}
+
+.holidayGreeting {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.holidayObserved {
+  margin-top: 5px;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--dc-closed-ink);
+}
+
+.moved {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.absorbed {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: var(--dc-radius-sm);
+  background: var(--dc-heavy);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--dc-heavy-ink);
+}
+
+.orders {
+  display: grid;
+  gap: 6px;
+  margin: 11px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.order {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  padding-top: 7px;
+  border-top: 1px solid var(--dc-hair);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.orderId {
+  font-weight: 700;
+}
+
+.orderCustomer {
+  color: var(--dc-muted);
+}
+
+.orderMoved {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--dc-heavy);
+  color: var(--dc-heavy-ink);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/*
+ * A phone. Seven fixed columns on a 320px screen are about 42px wide, and
+ * table-layout: fixed means the grid cannot widen to take anything more: it just
+ * paints over the next day. So the cell keeps the numeral and one state mark,
+ * and everything that was a word becomes a mark.
+ *
+ * Nothing is lost that was only here. The condition is still carried by the
+ * cell's fill and named in the legend above, the exact load is in the panel
+ * underneath, and the day button's aria-label reads all of it out in full.
+ */
+@media (max-width: 560px) {
+  .grid {
+    border-spacing: 3px;
+  }
+
+  .day {
+    min-height: 48px;
+    padding: 5px 4px;
+    gap: 3px;
+  }
+
+  .dayNumber {
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  /* The pill becomes the dot it always was underneath the word. */
+  .todayText {
+    display: none;
+  }
+
+  .todayMark {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+  }
+
+  /*
+   * The truck stays. It is 9px, it fits beside the numeral, and the legend above
+   * names it: hiding it here would leave that legend row explaining something
+   * the reader cannot see. What was overflowing was the absorbed count stacked
+   * on top of both, and .dayState wrapping is what fixes that.
+   */
+  .closedMark {
+    font-size: 8px;
+  }
+
+  .absorbMark {
+    padding: 1px 4px;
+    font-size: 8px;
+  }
+}
+
+.moreOrders {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid var(--dc-hair);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--dc-muted);
+}
+
+.panelEmpty {
+  margin: 11px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dc-muted);
+}
+
+.note {
+  margin-top: 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--dc-muted);
+}

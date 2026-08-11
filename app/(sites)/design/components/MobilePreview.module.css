@@ -1,0 +1,386 @@
+/*
+ * Hidden by default and shown only on a layout that is unambiguously the desktop
+ * one. 1024px clears every breakpoint this site turns at, the highest being the
+ * software study's 960px four-up, so the button can never appear beside an
+ * already-narrow layout and offer to show it narrow.
+ *
+ * The pointer gate keeps it off tablets, where previewing the mobile layout is
+ * either meaningless or already happening. pointer: fine reports the primary
+ * pointer, so a touchscreen laptop with a trackpad still passes.
+ *
+ * display: none also takes it out of the tab order, and the iframe is only built
+ * on open, so nothing about this leaks onto a phone.
+ */
+.fab {
+  display: none;
+}
+
+@media (min-width: 1024px) and (pointer: fine) and (hover: hover) {
+  .fab {
+    position: fixed;
+    bottom: 26px;
+    right: 26px;
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 15px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    /*
+     * Driven by MobilePreview, which writes the outro's share of the screen here
+     * once a frame while you scroll. 1 until the marquee starts to arrive, 0 by
+     * the time the contact panel fills the view. The fallback matters: without
+     * JavaScript, or before hydration, the button is simply always there.
+     *
+     * Deliberately not transitioned. The value already changes once a frame, so
+     * a transition would leave the opacity permanently chasing the scroll and
+     * smear rather than smooth it.
+     */
+    opacity: var(--fab-opacity, 1);
+    transition:
+      background 0.25s var(--ease),
+      color 0.25s var(--ease);
+  }
+}
+
+/* The same reversal WorkIndex uses on a row: ink fills, paper reads. */
+.fab:hover,
+.fab:focus-visible {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--paper);
+}
+
+/* Applied to <html> while the preview is up. <dialog> does not lock the page. */
+.lock {
+  overflow: hidden;
+}
+
+/* --- the stage ------------------------------------------------------------ */
+
+/*
+ * Edge to edge on the site's own paper, with no scrim and no shadow, so this
+ * reads as the page going into phone width rather than as a dialog opening over
+ * it. The <dialog> underneath is doing the focus trap, the Escape key and the
+ * top layer; none of it has to look like one.
+ *
+ * The backdrop never shows, because this covers it. Left transparent rather than
+ * painted, since ::backdrop's inheritance from the originating element is recent
+ * and a token in there could resolve to nothing on an older engine.
+ */
+/*
+ * display: none until it is open, and this line is load-bearing.
+ *
+ * A closed <dialog> is hidden by the UA's `dialog:not([open]) { display: none }`,
+ * and any author `display` on the element beats it outright. Setting
+ * `display: flex` on .stage itself therefore pinned a full-viewport fixed box
+ * over the page from first paint: the site looked like it loaded straight into
+ * preview mode, the nav and the button showed through because the box was below
+ * them in the stacking order, and the frame was empty because the iframe only
+ * mounts once open. One property, three symptoms.
+ *
+ * So the covering layout belongs to [open] and nothing but the geometry lives
+ * here.
+ */
+.stage {
+  display: none;
+  position: fixed;
+  inset: 0;
+  /*
+   * showModal() puts this in the top layer, where z-index is ignored and nothing
+   * on the page can paint over it. Declared anyway as the fallback for when that
+   * does not engage, because without it the dialog sits at z-index: auto and
+   * loses to the sticky nav at 20 and the button at 25.
+   *
+   * Under PageTransition's 9999 deliberately: a route change should wipe over
+   * the preview, not under it.
+   */
+  z-index: 9998;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.stage::backdrop {
+  background: transparent;
+}
+
+/*
+ * A fade and nothing else. The earlier version rose 12px, which is how a dialog
+ * arrives; the page changing state should not arrive from anywhere.
+ *
+ * animation-fill-mode: both is not optional. globals.css forces every duration
+ * to 0.001ms under prefers-reduced-motion, so without it the stage would settle
+ * on its pre-animation state and a reduced-motion reader would see nothing.
+ *
+ * No exit animation to match. close() drops the element out of the top layer at
+ * once, so faking one means holding the preview on screen after the reader has
+ * asked for it gone.
+ */
+.stage[open] {
+  display: flex;
+  animation: previewIn 0.2s var(--ease) both;
+}
+
+@keyframes previewIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* --- the bar -------------------------------------------------------------- */
+
+/* The 2px ink rule, as everywhere else: below this is one discrete artifact. */
+.bar {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex: none;
+  padding: 13px var(--gutter);
+  border-bottom: 2px solid var(--ink);
+}
+
+.mode {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.16em;
+}
+
+.device {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  color: var(--ochre-ink);
+}
+
+.close {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--ochre-ink);
+}
+
+/* --- the frame ------------------------------------------------------------ */
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 0;
+  padding: 22px var(--gutter);
+}
+
+/*
+ * The drawing convention for a dimension: a tick at each end, a hairline
+ * between, and the figure sitting on the line. It is the one thing the frame
+ * below cannot say about itself, and saying it is what stops the preview being
+ * mistaken for a decorative phone.
+ */
+.measure {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  height: 15px;
+  border-left: 1px solid var(--ink);
+  border-right: 1px solid var(--ink);
+}
+
+.measure::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--hair);
+}
+
+/* Paper behind the figure, so the rule reads as passing under it. */
+.measureLabel {
+  position: relative;
+  padding: 0 9px;
+  background: var(--paper);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: var(--ink-muted);
+}
+
+.viewport {
+  position: relative;
+  flex: none;
+  border: 2px solid var(--ink);
+  overflow: hidden;
+}
+
+/* --- the skeleton --------------------------------------------------------- */
+
+/*
+ * Over the iframe, and it fades rather than switching off. A hard swap on load
+ * lands on a document that has a background but has not laid out yet, so the
+ * skeleton would be replaced by a blank frame for a beat, which is the one
+ * moment it exists to cover.
+ */
+.skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 0 0 22px;
+  background: var(--paper);
+  transition: opacity 0.35s var(--ease);
+}
+
+/* pointer-events, or a faded-out skeleton keeps swallowing clicks meant for
+   the page underneath it. */
+.skeletonDone {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/*
+ * One sweep of paper across the tint, which is the only pair of greys this sheet
+ * has. No pulse and no spinner: a skeleton that says where things will be is
+ * doing more work than one that says only that something is happening.
+ *
+ * animation-fill-mode: both matters here. globals.css cuts every duration to
+ * 0.001ms under prefers-reduced-motion, so without it the bars would settle
+ * mid-sweep with a bright band frozen across them. With it they land on the
+ * final frame, where the highlight has already left, and the skeleton is simply
+ * still.
+ */
+.bone {
+  flex: none;
+  background: linear-gradient(
+    90deg,
+    var(--tint) 25%,
+    var(--paper) 50%,
+    var(--tint) 75%
+  );
+  background-size: 220% 100%;
+  animation: sweep 1.5s linear infinite both;
+}
+
+@keyframes sweep {
+  from {
+    background-position: 160% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+
+/* The bar, with its 2px rule, exactly where the real one lands. */
+.skelBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--ink-22);
+}
+
+.skelBrand {
+  width: 42%;
+  height: 11px;
+}
+
+.skelBurger {
+  width: 22px;
+  height: 14px;
+}
+
+.skelKicker {
+  width: 34%;
+  height: 8px;
+  margin: 0 18px;
+}
+
+.skelHead {
+  width: calc(100% - 36px);
+  height: 26px;
+  margin: 0 18px;
+}
+
+.skelHeadShort {
+  width: 58%;
+  height: 26px;
+  margin: 0 18px 10px;
+}
+
+.skelLine {
+  width: calc(100% - 36px);
+  height: 9px;
+  margin: 0 18px;
+}
+
+.skelLineShort {
+  width: 64%;
+  height: 9px;
+  margin: 0 18px 14px;
+}
+
+/* The first framed exhibit, which is what actually sits under the hero. */
+.skelBlock {
+  width: calc(100% - 36px);
+  flex: 1;
+  min-height: 90px;
+  margin: 0 18px;
+}
+
+/*
+ * The iframe keeps its real 402 x 874 box and is drawn smaller from its top-left
+ * corner, so the viewport being previewed is the one the measure names.
+ */
+.screen {
+  display: block;
+  border: 0;
+  transform-origin: top left;
+  background: var(--paper);
+}

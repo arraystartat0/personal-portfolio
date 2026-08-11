@@ -1,0 +1,229 @@
+/*
+ * Bootstrap 5's defaults over the client's green, which is what version one
+ * was. The button colours below are Bootstrap's own primary, success and
+ * danger rather than anything chosen: that is the point of the render.
+ */
+.app {
+  --bs-primary: #0d6efd;
+  --bs-success: #198754;
+  --bs-danger: #dc3545;
+  --bp-green: #acd04d;
+  --bs-border: #dee2e6;
+  --bs-muted: #6c757d;
+
+  position: relative;
+  background: #fff;
+  color: #212529;
+  font-family: var(--font-poppins), system-ui, sans-serif;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--bs-border);
+}
+
+.brand {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.nav {
+  margin-left: auto;
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* Centred, which is how a page with nothing to say arranges itself. */
+.hero {
+  padding: 22px 14px 18px;
+  text-align: center;
+}
+
+.greeting {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.sub {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #212529;
+}
+
+.group {
+  margin-top: 14px;
+}
+
+.groupHeading {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 7px;
+}
+
+.button {
+  padding: 5px 12px;
+  border-radius: 0.25rem;
+  color: #fff;
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+.primary {
+  background: var(--bs-primary);
+}
+
+.success {
+  background: var(--bs-success);
+}
+
+.danger {
+  background: var(--bs-danger);
+}
+
+.tableSection {
+  padding: 4px 14px 20px;
+}
+
+.tableHeading {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/*
+ * Fourteen columns will not fit, and the finding is that they never did. It
+ * scrolls inside the frame instead of widening it, which is also how the real
+ * one behaved.
+ */
+/*
+ * overflow-x only scrolls a box that is narrower than its contents, and this box
+ * takes that on trust from its ancestors. It holds today: measured at a 320px
+ * viewport the wrapper is 237px and the table inside it is 1200px, which is the
+ * arrangement that works.
+ *
+ * The pair below makes it hold by construction rather than by luck. min-width: 0
+ * stops a grid or flex ancestor from sizing this to its content, and
+ * max-width: 100% caps it against its container everywhere else. Belt and
+ * braces on a box whose failure mode is the whole page panning sideways on a
+ * phone. The same pair guards all three mockup tables.
+ */
+.tableWrap {
+  margin-top: 7px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--bs-border);
+}
+
+.table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.table th,
+.table td {
+  padding: 5px 6px;
+  border: 1px solid var(--bs-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Same size, same weight, same colour as the data. That is the whole problem. */
+.table th {
+  font-weight: 600;
+  color: #212529;
+}
+
+.table td {
+  color: #212529;
+}
+
+.table tbody tr:nth-child(even) td {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* --- the modal everything opened into ------------------------------------ */
+
+.modalLayer {
+  position: relative;
+  padding: 18px 14px 22px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  max-width: 340px;
+  margin: 0 auto;
+  border-radius: 0.3rem;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--bs-border);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.modalClose {
+  color: var(--bs-muted);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.modalBody {
+  display: grid;
+  gap: 7px;
+  padding: 12px;
+}
+
+.modalField {
+  display: block;
+}
+
+.modalLabel {
+  display: block;
+  font-size: 9.5px;
+  line-height: 1.4;
+  color: #212529;
+}
+
+.modalInput {
+  display: block;
+  height: 20px;
+  margin-top: 3px;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  background: #fff;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding: 9px 12px;
+  border-top: 1px solid var(--bs-border);
+}

@@ -1,0 +1,40 @@
+.wrap {
+  position: relative;
+}
+
+/*
+ * Blue, and blue on purpose. It is this site's focus-ring colour, so it is
+ * already the one hue that means "a control is here"; ochre is the annotation
+ * voice and would read as another caption about the render rather than an
+ * invitation to touch it.
+ *
+ * Height is deliberately close to twice the frame header's 8px bottom padding.
+ * Pulled up half its own height it lands on the header's rule and the mockup's
+ * top padding, and reaches the header's baseline without crossing it.
+ */
+.tag {
+  position: absolute;
+  top: 0;
+  right: clamp(10px, 1.4vw, 16px);
+  z-index: 2;
+  transform: translateY(-50%);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--blue);
+  color: var(--paper);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+/* Square, because nothing in this site's vocabulary has a radius. */
+.dot {
+  width: 5px;
+  height: 5px;
+  background: var(--paper);
+}

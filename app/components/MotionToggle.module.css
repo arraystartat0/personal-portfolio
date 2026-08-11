@@ -1,0 +1,27 @@
+/*
+ * Structure only, never a look. Each site passes its own class for the button,
+ * the way SiteSwitcher works, so this sheet holds the one rule the three sites
+ * must not have to repeat and nothing else.
+ *
+ * display: contents, so a wrapper none of the footers asked for cannot disturb
+ * the layouts it is dropped into.
+ */
+.mount {
+  display: contents;
+}
+
+/*
+ * A system already asking for reduced motion has stopped every loop this button
+ * would stop, so leaving it on the page is offering a control that visibly does
+ * nothing. It hides instead.
+ *
+ * On the wrapper rather than the button, and here rather than in each site's
+ * sheet, so it can never lose a specificity tie with the class the site passed
+ * in: that class and this one would both weigh (0,1,0), and the winner would
+ * come down to the order two CSS modules happened to be bundled in.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .mount {
+    display: none;
+  }
+}

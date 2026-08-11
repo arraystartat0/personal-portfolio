@@ -1,0 +1,189 @@
+/*
+ * The panel that carries you between the four pages: it wipes down over the
+ * page you are leaving, the route swaps behind it, then it wipes off to the
+ * left onto the page you asked for.
+ *
+ * It belongs to the chrome, not to any one of the three sites, so it runs in
+ * the hub's dark language everywhere and only takes its accent from wherever
+ * you are headed.
+ */
+.overlay {
+  --ink: #0a0a0c;
+  --text: #edebe6;
+  --muted: rgba(237, 235, 230, 0.55);
+  --ease-wipe: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  font-family: var(--font-sans);
+}
+
+/* Not rendered at rest, which is also what keeps it from eating clicks. */
+.overlay[data-phase="idle"] {
+  display: none;
+}
+
+.panel {
+  position: absolute;
+  display: grid;
+  inset: 0;
+  place-items: center;
+  background: var(--ink);
+  will-change: transform;
+}
+
+/* A wash of the destination accent, so the panel is already tinted by the
+   place it is taking you before that page arrives. */
+.panel::before {
+  position: absolute;
+  z-index: 0;
+  background: radial-gradient(
+    58% 52% at 50% 34%,
+    rgb(var(--accent) / 0.16),
+    transparent 72%
+  );
+  content: "";
+  inset: 0;
+}
+
+/* --- the two wipes ------------------------------------------------------- */
+
+.overlay[data-phase="covering"] .panel {
+  animation: wipeDown var(--cover-ms) var(--ease-wipe) both;
+}
+
+/* Held closed while the route resolves. */
+.overlay[data-phase="waiting"] .panel {
+  transform: translate3d(0, 0, 0);
+}
+
+.overlay[data-phase="revealing"] .panel {
+  animation: wipeLeft var(--reveal-ms) var(--ease-wipe) both;
+}
+
+@keyframes wipeDown {
+  from {
+    transform: translate3d(0, -100%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes wipeLeft {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+/* A lit hairline on whichever edge is leading, so each wipe reads as a sheet
+   with a direction rather than a rectangle changing size. */
+.edge {
+  position: absolute;
+  z-index: 1;
+  background: rgb(var(--accent) / 0.85);
+  box-shadow: 0 0 18px 1px rgb(var(--accent) / 0.45);
+  opacity: 0;
+}
+
+.edgeDown {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+}
+
+.edgeLeft {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+}
+
+.overlay[data-phase="covering"] .edgeDown,
+.overlay[data-phase="revealing"] .edgeLeft {
+  opacity: 1;
+}
+
+/* --- the wait ------------------------------------------------------------ */
+
+.status {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  padding: 0 24px;
+  gap: 18px;
+  text-align: center;
+}
+
+/*
+ * Reduced motion collapses the spin to nothing, which is fine: the arc still
+ * sits proud of the track, and the line of copy below changes on a JS timer,
+ * so the panel is still visibly alive without anything moving.
+ */
+.ring {
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgb(var(--accent) / 0.2);
+  border-radius: 50%;
+  border-top-color: rgb(var(--accent));
+  animation: spin 0.85s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.label {
+  color: rgb(var(--accent));
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Fixed height so a longer line never shoves the ring around mid-wait. */
+.message {
+  display: flex;
+  max-width: 34ch;
+  min-height: 2.8em;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  animation: rise 0.4s var(--ease) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,0 +1,1597 @@
+/*
+ * The product's own tokens, lifted from its `sass/main.scss` rather than picked
+ * off a screenshot, and scoped here so none of it reaches the study around it.
+ *
+ *   $primary   #D0D0D0   the page ground
+ *   $secondary #f7f6fb   every card, and the white-ish controls
+ *   altdark    #e0e0e0   toolbar strips
+ *   tertiary   #D9D9D9   the table header row
+ *   altlight   #8B8B8B   muted type
+ *   blitzGreen #ACD04D   the active nav pill, black text on it
+ *
+ * $border-radius is overridden to 50rem in the app, which is why every control
+ * here is a full pill and only the cards are merely rounded.
+ */
+/*
+ * The render reflows on its own width, not the viewport's, and the difference is
+ * not academic. Keyed off the viewport it was only ever right by coincidence:
+ * ds.frame happens to be the page minus two gutters today, and the day a study
+ * gains an inset or a max-width every breakpoint in this file would have gone
+ * quietly wrong.
+ *
+ * The two container widths are the app's own lg (992px) and md (768px)
+ * boundaries at this render's scale. Everything here is set at 11px where the
+ * app sets it at 16px, so 992 x 11/16 = 680 and 768 x 11/16 = 530.
+ *
+ * container-name is not scoped by CSS Modules the way class names are, so it
+ * carries the file's --sx- prefix rather than a word something else might claim.
+ *
+ * container-type also brings layout containment, which is what makes .app the
+ * containing block the drawer positions against, for free.
+ */
+.app {
+  container: sx-app / inline-size;
+  position: relative;
+  /* clip, not hidden, per .root: the drawer parks off the left edge and must not
+     escape into the study, and hidden would make this a scrollport. */
+  overflow: clip;
+
+  --sx-ground: #d0d0d0;
+  --sx-card: #f7f6fb;
+  --sx-altdark: #e0e0e0;
+  --sx-tertiary: #d9d9d9;
+  /*
+   * Darkened from the app's own #8b8b8b, which measured 3.17:1 on the card and
+   * carries 17 labels here at 9 to 11px. This render is text on a real page, so
+   * a grey the page cannot pass with is a grey the render cannot use. 4.93:1.
+   */
+  --sx-muted: #6b6b70;
+  --sx-ink: #000000;
+  --sx-lime: #acd04d;
+  --sx-border: #dee2e6;
+  --sx-danger: #dc3545;
+
+  background: var(--sx-ground);
+  color: var(--sx-ink);
+  font-family: var(--font-poppins), system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.app svg {
+  flex: none;
+}
+
+/* --- top bar --------------------------------------------------------------- */
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 12px 14px 10px;
+}
+
+/* 60px in the live navbar, scaled with the rest of this page-size render. */
+.brand {
+  display: block;
+  width: auto;
+  height: 34px;
+}
+
+/*
+ * The live greeting carries `mx-6`, a custom 3.5rem spacer, so it sits well
+ * clear of the mark rather than butted against it. Scaled to match.
+ */
+/* cqi, not vw: the whole file measures itself against .app now, and one
+   viewport-relative length left in it would scale on a different clock. */
+.greetingBlock {
+  min-width: 0;
+  margin-inline: clamp(8px, 2.2cqi, 26px);
+}
+
+.greeting {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.sub {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #6c757d;
+}
+
+.stamp {
+  margin-left: auto;
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--sx-muted);
+}
+
+/* A grey pill holding two white circular buttons, per the live navbar. */
+.topActions {
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--sx-altdark);
+}
+
+.topBtn {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--sx-card);
+}
+
+/* --- the mobile menu -------------------------------------------------------- */
+
+/*
+ * Hidden until the container is narrow enough for the rail to have gone, which
+ * is what the live app does to its own toggler:
+ * .navbar-expand-lg .navbar-toggler { display: none }.
+ *
+ * Above the scrim, so it stays reachable while the panel is open and the glyph
+ * can flip to an X. The drawer's own close button and the backdrop both work
+ * too, so this is one of three ways out rather than the only one.
+ */
+.burger {
+  display: none;
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 3;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sx-ink);
+  cursor: pointer;
+}
+
+/*
+ * bg-primary, 400px capped at 100vw in the app, so 275px here and capped at the
+ * render's own width rather than the viewport's.
+ *
+ * visibility rather than display, transitioning alongside the transform: opening
+ * it flips at once so the slide is seen, closing it holds visible for the whole
+ * 300ms so the slide out is seen too. It also keeps the parked drawer out of the
+ * accessibility tree, which display would do at the cost of both animations and
+ * opacity alone would not do at all.
+ *
+ * Nothing here needs a prefers-reduced-motion block, and the absence is the
+ * surprising part: these are transitions to a state that is declared, and
+ * globals.css forces every duration to 0.001ms, so a reduced-motion reader lands
+ * straight on the resolved state. Open, visible, in place. That is CLAUDE.md's
+ * "hold the resolved state" satisfied with no extra CSS.
+ */
+.drawer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  width: min(275px, 100%);
+  padding: 13px 14px;
+  background: var(--sx-ground);
+  visibility: hidden;
+  transform: translateX(-100%);
+  transition:
+    transform 300ms ease-in-out,
+    visibility 300ms ease-in-out;
+}
+
+/*
+ * $modal-backdrop-bg at $modal-backdrop-opacity: black at 50%. Absolute, not
+ * fixed, so it dims the render and never the study around it.
+ */
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #000;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 300ms ease-in-out,
+    visibility 300ms ease-in-out;
+}
+
+.drawerOpen {
+  visibility: visible;
+  transform: none;
+}
+
+.scrimOpen {
+  visibility: visible;
+  opacity: 0.5;
+}
+
+.drawerHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.55);
+}
+
+.drawerTitle {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* .btn-close, and it really closes. */
+.drawerClose {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sx-ink);
+  cursor: pointer;
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.55);
+}
+
+/*
+ * The offcanvas list is `nav nav-pills`, so the lit item takes the same lime
+ * pill the sidebar rail's does: main.scss sets $nav-pills-link-active-bg to
+ * #ACD04D and $nav-pills-link-active-color to black, and $border-radius makes it
+ * a full one. The first pass set it as bold black text with no fill, which is
+ * what the markup looks like it should do and not what the compiled CSS does.
+ *
+ * The resting items differ from the rail's, though: fw-light on a transparent
+ * ground rather than a chip each.
+ */
+.drawerLink {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 300;
+  line-height: 1.3;
+  color: #212529;
+}
+
+.drawerLinkActive {
+  background: var(--sx-lime);
+  color: #000;
+  font-weight: 700;
+}
+
+.drawerFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 11px;
+}
+
+.drawerUser {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--sx-altdark);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* btn-danger, the one red control on the screen, exactly as in the offcanvas. */
+.drawerOut {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--sx-danger);
+  color: #fff;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* --- shell ----------------------------------------------------------------- */
+
+.shell {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 0 14px 12px;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border-radius: 999px;
+  background: var(--sx-card);
+  font-size: 10.5px;
+  line-height: 1.2;
+}
+
+.navItemActive {
+  background: var(--sx-lime);
+  color: #000;
+  font-weight: 700;
+}
+
+.main {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-width: 0;
+}
+
+/* --- cards ----------------------------------------------------------------- */
+
+.card {
+  position: relative;
+  min-width: 0;
+  padding: 12px 13px;
+  border: 2px solid var(--sx-border);
+  border-radius: 16px;
+  background: var(--sx-card);
+}
+
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardTitle {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--sx-muted);
+}
+
+.select {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px;
+  border: 1px solid var(--sx-border);
+  border-radius: 999px;
+  background: var(--sx-card);
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+/* --- KPI tiles -------------------------------------------------------------- */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(146px, 1fr));
+  gap: 10px;
+}
+
+/* float-end in the live markup: lime at 25%, with the glyph at full lime. */
+.kpiBadge {
+  position: absolute;
+  top: 12px;
+  right: 13px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(172, 208, 77, 0.25);
+  /*
+   * #ACD04D is what `text-blitzGreen` resolves to, and on a 25% wash of itself
+   * it is genuinely faint. Held at the product's value rather than darkened:
+   * the badge is decorative, the figure beside it carries the meaning, and
+   * "correcting" it here would be showing a card the app does not have.
+   */
+  color: var(--sx-lime);
+}
+
+.kpiLabel {
+  padding-right: 36px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--sx-muted);
+}
+
+.kpiValue {
+  margin-top: 3px;
+  /* cqi for the reason .greetingBlock gives. */
+  font-size: clamp(15px, 2.1cqi, 19px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.kpiDelta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px 6px;
+  margin-top: 5px;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.kpiPct {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #157347;
+  font-weight: 600;
+}
+
+.kpiSince {
+  color: var(--sx-muted);
+}
+
+/* --- chart rows -------------------------------------------------------------- */
+
+.chartRow,
+.lowerRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.lowerRow {
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+}
+
+
+/*
+ * Chart.js runs with maintainAspectRatio off, so the canvas takes whatever
+ * height its box is given. A fixed height was wrong: these cards sit in grid
+ * rows that stretch them to the tallest cell, so Revenue beside a five-entry
+ * activity feed ended up a tall card with a short chart and a field of empty
+ * grey under it.
+ *
+ * The card becomes a column and the box takes the slack, so the canvas grows
+ * with the card instead of leaving a hole in it. min-height keeps it readable
+ * in the rows where nothing is forcing the card taller.
+ */
+.chartCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.chartBox {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 150px;
+  margin-top: 8px;
+}
+
+/* --- activity timeline -------------------------------------------------------- */
+
+/*
+ * `h-100` on the live card, so it matches the chart beside it. The card becomes
+ * a column and the timeline takes the leftover height, which is what stops the
+ * feed sitting in the top third of a tall box with dead space under it.
+ */
+.activityCard {
+  display: flex;
+  flex-direction: column;
+}
+
+/*
+ * The rail is drawn once by the list rather than per item. Per item is what the
+ * live CSS does and it is right there, where the entries are flush; here the
+ * entries are distributed to fill the card, so an item-drawn rail would break
+ * into segments with gaps between them.
+ */
+.timeline {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 9px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 12px;
+  width: 2px;
+  background: var(--sx-ground);
+}
+
+.timelineItem {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  padding: 9px 0;
+}
+
+.timelineIcon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 999px;
+  color: #fff;
+}
+
+/* Straight from analytics.js: the disc at 80%, the heading at full strength. */
+.order {
+  background: rgba(57, 175, 209, 0.8);
+}
+
+.quote {
+  background: rgba(135, 195, 143, 0.8);
+}
+
+.customer {
+  background: rgba(250, 92, 124, 0.8);
+}
+
+.purchase {
+  background: rgba(255, 148, 71, 0.8);
+}
+
+.report {
+  background: rgba(177, 141, 255, 0.8);
+}
+
+.orderText {
+  color: rgb(57, 175, 209);
+}
+
+.quoteText {
+  color: rgb(135, 195, 143);
+}
+
+.customerText {
+  color: rgb(250, 92, 124);
+}
+
+.purchaseText {
+  color: rgb(255, 148, 71);
+}
+
+.reportText {
+  color: rgb(177, 141, 255);
+}
+
+.timelineContent {
+  min-width: 0;
+  color: var(--sx-muted);
+}
+
+.timelineLead {
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.timelineBody {
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-weight: 300;
+  line-height: 1.55;
+}
+
+.timelineLink {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.timelineWhen {
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 300;
+  line-height: 1.3;
+}
+
+/* --- orders -------------------------------------------------------------------- */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--sx-muted);
+}
+
+/*
+ * Declared even though it carries only the resting colour: `styles.tab` with no
+ * rule behind it resolves to undefined and lands the literal string "undefined"
+ * in the class attribute.
+ */
+.tab {
+  color: var(--sx-muted);
+}
+
+.tabActive {
+  color: #000;
+  box-shadow: inset 0 -2px 0 #000;
+}
+
+/* altdark, a shade under the cards, exactly as the live toolbar strip is. */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 2px solid var(--sx-border);
+  border-radius: 16px;
+  background: var(--sx-altdark);
+}
+
+.createBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 8px 5px 13px;
+  border-radius: 999px;
+  background: var(--sx-card);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/*
+ * .trash-beta-pill: a white pill carrying the BETA tag on the left with the
+ * Trash button raised on top of it at the right. The first pass had the outer
+ * container grey and the tag tiny, which lost both the layering and the tag.
+ */
+.trashPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  padding: 2px 5px 2px 13px;
+  border: 1px solid #ededf0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/*
+ * The live BETA tag is a shimmering pale-rainbow gradient clipped to the text.
+ * Reproduced as the gradient without the 6s animation: the study already runs
+ * one looping animation, and a second one competing with it in a static render
+ * would be motion for its own sake.
+ */
+.beta {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  background: linear-gradient(
+    90deg,
+    #f7a8c4,
+    #f9c6a0,
+    #f6e7a0,
+    #a9e6b8,
+    #a6cdf2,
+    #c9b4f0,
+    #f7a8c4
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Raised inside the pill, and its shadow throws left, as the live one does. */
+.trashBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 12px 3px 14px;
+  border: 1px solid #e3e3e6;
+  border-radius: 999px;
+  background: #fbfbfc;
+  box-shadow: -3px 2px 8px rgba(0, 0, 0, 0.13);
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--sx-border);
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: var(--sx-muted);
+}
+
+.searchInput {
+  min-width: 0;
+}
+
+/* See PrototypeApp.module.css: the pair keeps overflow-x able to scroll. */
+.tableWrap {
+  margin-top: 10px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  /*
+   * What the operations row needs on one line, plus the five columns beside it.
+   * 560 was a floor from when that cell was allowed to wrap; with nowrap the
+   * table's own min-content already exceeds it, which made the declaration a
+   * number that described nothing.
+   */
+  min-width: 720px;
+  border-collapse: separate;
+  border-spacing: 0 4px;
+  font-size: 10px;
+  line-height: 1.4;
+  /* Centred, as the live table is: `thead`/`tbody` both carry `text-center`. */
+  text-align: center;
+}
+
+/*
+ * bg-tertiary, light weight, with the first and last cells rounded so the row
+ * reads as one grey bar. That is the live header treatment, and it is the thing
+ * the prototype's table did not have.
+ */
+.table th {
+  padding: 7px 8px;
+  background: var(--sx-tertiary);
+  font-size: 10px;
+  font-weight: 300;
+  vertical-align: middle;
+}
+
+.table th:first-child {
+  border-radius: 999px 0 0 999px;
+}
+
+.table th:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+.table td {
+  padding: 4px 8px;
+  vertical-align: middle;
+}
+
+/*
+ * Last column, and the only tinted thing in the table. Each state is a filled
+ * pill rather than a tinted word, so the column reads as one band of states you
+ * can sort by eye before reading any of them, and each status carries a shape as
+ * well as a hue.
+ *
+ * A pill because the app overrides Bootstrap's $border-radius to 50rem, so this
+ * is the shape the product already draws everywhere else rather than one
+ * invented for the render.
+ */
+.statusCell {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/*
+ * The glyph takes the cell's colour, so status is carried four ways at once: the
+ * word, the icon, the tint and now the chip. Everything but the tint survives a
+ * reader who cannot separate the hues, which is the test any status column has
+ * to pass.
+ *
+ * Every fill is roughly 6% of its own hue over white, which is the weight that
+ * leaves each tone's ink unchanged and still above 4.5:1 against the chip it now
+ * sits on. Tightest pair is completed at about 4.8:1, loosest is production at
+ * about 7.3:1. The ink colours below are the ones the table already used.
+ */
+.statusInner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--status-fill);
+}
+
+/*
+ * Forced colours strips the fill, and the fill is half of what makes these read
+ * as one column. The border is transparent until then and takes the tone's own
+ * colour, so the chip keeps its shape when the tint goes.
+ */
+@media (forced-colors: active) {
+  .statusInner {
+    border-color: currentColor;
+  }
+}
+
+.created {
+  --status-fill: #f5f6f7;
+  color: #5f636a;
+}
+
+.awaiting {
+  --status-fill: #fdf6ec;
+  color: #a2600b;
+}
+
+.production {
+  --status-fill: #eef3fa;
+  color: #1f4f8f;
+}
+
+.dispatch {
+  --status-fill: #f4effb;
+  color: #6b3fa0;
+}
+
+.completed {
+  --status-fill: #eaf7ef;
+  color: #177a45;
+}
+
+/*
+ * The one cell that is not centred, which is what the live table does too:
+ * `justify-content-center justify-content-sm-start`, so it centres only on a
+ * phone. Five controls of uneven width centred in every row give the column no
+ * shared left edge, and the eye needs one to find the same button twice.
+ */
+.opsCell {
+  display: flex;
+  /*
+   * No wrap, which is the live cell's own behaviour: five controls on one line
+   * at every width, and the table scrolls inside .tableWrap rather than the row
+   * folding. Wrapping also let the browser compute a much smaller min-content
+   * for this column, which is what folded the two print buttons onto a second
+   * line even on a wide frame.
+   */
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+}
+
+.iconBtn {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin: 2px;
+}
+
+/* A raised white pill carrying the pencil and its BETA tag. */
+.editPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 3px;
+  padding: 2px 9px 2px 2px;
+  border: 1px solid #ededf0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* The raised circle, shadow throwing right. Resting state, not the hover. */
+.editBtn {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #e3e3e6;
+  border-radius: 999px;
+  background: #fbfbfc;
+  color: #212529;
+  box-shadow: 3px 2px 8px rgba(0, 0, 0, 0.13);
+}
+
+.editPill .beta {
+  font-size: 8.5px;
+}
+
+.deletePill {
+  display: inline-flex;
+  margin: 3px;
+  padding: 2px;
+  border: 1px solid #ededf0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* Red is reserved for this one control, which is why it is the only red here. */
+.deleteBtn {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #f1c2c7;
+  border-radius: 999px;
+  background: #fbfbfc;
+  color: var(--sx-danger);
+  box-shadow: 3px 2px 8px rgba(0, 0, 0, 0.13);
+}
+
+.printBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 3px;
+  font-size: 10px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+/* --- pagination ----------------------------------------------------------------- */
+
+/*
+ * `<nav><div class="d-flex justify-content-center"><div class="overflow-auto">`:
+ * centred, and it scrolls sideways rather than wrapping, so a long run of pages
+ * never turns into two ragged rows.
+ */
+.pager {
+  margin-top: 10px;
+  overflow-x: auto;
+  text-align: center;
+}
+
+.pagerList {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  white-space: nowrap;
+}
+
+/*
+ * $pagination-color and $pagination-border-color are both overridden to black in
+ * the app's build. The -1px start margin is Bootstrap's own: the chips overlap on
+ * their shared border so the run reads as one strip rather than a row of
+ * separate buttons.
+ *
+ * The radius is what the first pass got wrong. $border-radius is 50rem app-wide,
+ * but Bootstrap only ever applies it to .page-item:first-child and :last-child,
+ * and only to their outer corners. So the strip is one long capsule: a rounded
+ * cap at each end, square cells between. Giving every chip its own 999px turned
+ * it into a row of separate circles, a shape the product has nowhere.
+ */
+.pageLink {
+  display: block;
+  padding: 4px 10px;
+  border: 1px solid var(--sx-ink);
+  background: #fff;
+  color: var(--sx-ink);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.pagerList li:first-child .pageLink {
+  padding-left: 12px;
+  border-top-left-radius: 999px;
+  border-bottom-left-radius: 999px;
+}
+
+.pagerList li:last-child .pageLink {
+  padding-right: 12px;
+  border-top-right-radius: 999px;
+  border-bottom-right-radius: 999px;
+}
+
+.pagerList li:not(:first-child) .pageLink {
+  margin-left: -1px;
+}
+
+/*
+ * White on #ACD04D, which is what $pagination-active-color and
+ * $component-active-bg resolve to in the app's own build. Reproduced rather than
+ * corrected, for the reason .kpiBadge gives: this is a render of the product, and
+ * darkening it here would be showing a screen the product does not have. The
+ * contrast is poor and it should be raised in the app, not in the picture of it.
+ *
+ * z-index is mine, not Bootstrap's: with the -1px overlap the lit chip's black
+ * border would otherwise be half-covered by the one after it.
+ */
+.pageLinkActive {
+  position: relative;
+  z-index: 1;
+  background: var(--sx-lime);
+  color: #fff;
+}
+
+/* --- trash ---------------------------------------------------------------------- */
+
+/* The live page sets this on its own light strip, not loose on the ground. */
+.trashHeadBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 15px;
+  border: 2px solid var(--sx-border);
+  border-radius: 16px;
+  background: #e9e9ea;
+}
+
+.trashTitle {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  box-shadow: inset 0 -2px 0 #000;
+}
+
+.trashBack {
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: var(--sx-muted);
+}
+
+/* #d3d4d6, 4px of padding, 4px gaps: straight from trash.css. */
+.trashTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #d3d4d6;
+}
+
+.trashTab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #6b6f75;
+}
+
+.trashTabActive {
+  background: #fff;
+  color: #1f2227;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
+}
+
+.trashBadge {
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #cfd0d3;
+  color: #6b6f75;
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.trashTabActive .trashBadge {
+  background: #1f2227;
+  color: #fff;
+}
+
+.trashControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.trashSearch {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border: 1px solid var(--sx-border);
+  border-radius: 999px;
+  background: #fff;
+  font-size: 10px;
+  line-height: 1.3;
+  color: var(--sx-muted);
+}
+
+.toggleWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+/* Off, with the knob to the left, which is the state the screen loads in. */
+.toggle {
+  position: relative;
+  width: 26px;
+  height: 14px;
+  flex: none;
+  border-radius: 999px;
+  background: #c4c4c8;
+}
+
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.refreshBtn {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--sx-border);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.trashLegend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  padding: 0 6px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--sx-muted);
+}
+
+.trashLegendItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+}
+
+.trashLegendItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.trashLegendItem strong {
+  color: #1f2227;
+}
+
+/* The live dot carries a 3px translucent ring of its own colour. */
+.legendDot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 999px;
+}
+
+.dotActive {
+  background: #2f9e5f;
+  box-shadow: 0 0 0 3px rgba(47, 158, 95, 0.16);
+}
+
+.dotDeleted {
+  background: #e0941f;
+  box-shadow: 0 0 0 3px rgba(224, 148, 31, 0.16);
+}
+
+.retention {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--sx-altdark);
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+
+.trashRows {
+  display: grid;
+  gap: 7px;
+}
+
+.trashRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.trashText {
+  flex: 1 1 150px;
+  min-width: 0;
+}
+
+.trashRowTitle {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.trashRowMeta {
+  font-size: 9px;
+  line-height: 1.4;
+  color: var(--sx-muted);
+}
+
+.trashExpiry {
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--sx-muted);
+}
+
+.restoreBtn {
+  padding: 4px 12px;
+  border: 1px solid var(--sx-border);
+  border-radius: 999px;
+  background: #fbfbfc;
+  font-size: 9.5px;
+  line-height: 1.3;
+}
+
+.emptyLabel {
+  margin-top: 12px;
+  padding-top: 9px;
+  border-top: 1px solid var(--sx-border);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  color: var(--sx-muted);
+}
+
+.emptyState {
+  display: grid;
+  justify-items: center;
+  margin-top: 8px;
+  padding: 22px 12px;
+  text-align: center;
+}
+
+/* 76px in the app; scaled down with the rest of this page-size render. */
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: #e7e8ea;
+  color: #80848a;
+}
+
+.emptyTitle {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #34383e;
+}
+
+.emptyBody {
+  margin-top: 4px;
+  max-width: 32ch;
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: #80848a;
+}
+
+/* --- footer ------------------------------------------------------------------------ */
+
+/*
+ * A rounded rectangle, not a lozenge. The radius was already the card's 16px;
+ * what was wrong was the height, because 16px on a 34px bar rounds away to a
+ * pill. The live footer runs two lines deep on the right and the shape follows
+ * from that rather than from the radius.
+ */
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 14px 18px;
+  border: 2px solid var(--sx-border);
+  border-radius: 16px;
+  background: #f8f9fa;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: #6c757d;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.footerRight {
+  display: grid;
+  gap: 2px;
+  text-align: right;
+}
+
+.footerLicence {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footerHeart {
+  color: var(--sx-danger);
+}
+
+.version {
+  margin-top: -4px;
+  padding: 0 4px;
+  text-align: right;
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--sx-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* --- the app on a phone ----------------------------------------------------------- */
+
+/*
+ * The app's own lg boundary, 992px, at this render's scale. Everything below
+ * turns there in the live product too, and it all turns at once: the rail goes
+ * behind the toggler, the greeting and the clock and the avatar chips vanish
+ * with the collapse that holds them, the toolbar stacks and the charts go
+ * single-file. Two numbers, 620 and 720, used to describe this one event, and
+ * neither of them was right.
+ */
+@container sx-app (max-width: 680px) {
+  .burger {
+    display: grid;
+  }
+
+  /* Room for the toggler, which is absolutely positioned and takes no part in
+     the bar's flex layout. Below this the bar carries the mark alone. */
+  .top {
+    padding-right: 46px;
+  }
+
+  /*
+   * All three sit inside .collapse.navbar-collapse in the live markup, and
+   * .navbar-expand-lg only restores display: flex on it from lg up. They are not
+   * folded behind the toggler, they are simply not there: the toggler opens the
+   * offcanvas, not #navbarNav.
+   */
+  .greetingBlock,
+  .stamp,
+  .topActions {
+    display: none;
+  }
+
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* d-none d-lg-block. The drawer carries it now. */
+  .sidebar {
+    display: none;
+  }
+
+  /*
+   * col-12 plus text-center: each control takes its own full-width row and sits
+   * centred in it at its own width. Not stretched, which is why align-self is
+   * center rather than the flex default. gy-2 is 0.5rem, so 6px at this scale.
+   */
+  .toolbar {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .createBtn,
+  .trashPill {
+    align-self: center;
+    margin-left: 0;
+  }
+
+  /* justify-content-lg-start justify-content-center. */
+  .tabs {
+    justify-content: center;
+  }
+
+  .chartRow,
+  .lowerRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /*
+   * The app grows .dash-chart from 300 to 380 at this same boundary, for the
+   * same reason: a stacked chart is full width and needs the height to stay
+   * readable. Same ratio, this render's baseline.
+   */
+  .chartBox {
+    min-height: 190px;
+  }
+
+  /* The rail fills the row and the three buckets share it evenly. */
+  .trashTabs {
+    display: flex;
+    width: 100%;
+  }
+
+  .trashTab {
+    flex: 1 1 0;
+    justify-content: center;
+    padding: 6px 8px;
+    min-width: 0;
+  }
+
+  .trashControls {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .trashSearch {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+/*
+ * The app's md boundary, 768px, at the same scale, and it must stay below the
+ * block above: both queries match on a phone at equal specificity, so source
+ * order is what decides. The live trash.css orders its own two the same way.
+ */
+@container sx-app (max-width: 530px) {
+  /*
+   * The one real reflow on this screen. The segmented rail is dropped for a grid
+   * of standalone pills, which is the thing the render was getting wrong: on a
+   * phone the live page does not show a rail at all.
+   *
+   * auto-fit at 116px gives one column under about 250px and two above it with
+   * no extra breakpoint. 116 is trash.css's own 148px floor at this render's
+   * 0.78 scale, which is where .trashTab and .trashBadge already sat.
+   */
+  .trashTabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
+    gap: 6px;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  /* The glyph competes with the label and the count at this width, and the label
+     alone identifies the bucket. */
+  .trashTab > svg {
+    display: none;
+  }
+
+  .trashTab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    flex: none;
+    height: 38px;
+    padding: 0 11px;
+    border: 1px solid var(--sx-border);
+    border-radius: 999px;
+    background: #fff;
+    color: #495057;
+    font-size: 11px;
+    font-weight: 500;
+    box-shadow: none;
+  }
+
+  .trashTabLabel {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .trashBadge {
+    flex: none;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 5px;
+    background: #f8f9fa;
+    color: var(--sx-muted);
+  }
+
+  /* An empty bucket dims its border and its label, and keeps the nought: a
+     legible zero answers "is there anything in here" from across the room. */
+  .trashTabEmpty {
+    border-color: #e9ecef;
+    color: var(--sx-muted);
+  }
+
+  /* Declared after --empty, exactly as trash.css declares it, so an empty
+     bucket still reads as the selected one. */
+  .trashTabActive {
+    border-color: #212529;
+    background: #212529;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: none;
+  }
+
+  .trashTabActive .trashBadge {
+    background: var(--sx-lime);
+    color: #212529;
+    font-weight: 700;
+  }
+
+  /*
+   * flex-column plus align-items-center, with text-md-start and text-md-end both
+   * dropping to text-center. The two halves stack and centre; they do not stay
+   * pushed to opposite edges of a column only one of them reaches.
+   */
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footerLeft {
+    justify-content: center;
+  }
+
+  .footerRight {
+    justify-items: center;
+    text-align: center;
+  }
+
+  /* Follows the block above it rather than staying pinned to an edge nothing
+     else lines up on any more. */
+  .version {
+    text-align: center;
+  }
+}

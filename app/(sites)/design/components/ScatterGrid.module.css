@@ -1,0 +1,375 @@
+/*
+ * One 12s clock drives every animation in here: the six drifts, the closing
+ * gutters, the dissolving rules and the frame. They only read as a single
+ * gesture if they share a duration, so nothing below sets its own.
+ */
+.panel {
+  --loop: 12s;
+  --card-inset: clamp(26px, 4vw, 52px);
+  --card-gap: clamp(10px, 1.4vw, 18px);
+
+  position: relative;
+  overflow: hidden;
+  background: var(--tint);
+  min-height: clamp(340px, 42vw, 520px);
+}
+
+/* The structure underneath: strongest exactly while the system holds. */
+.graph {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background:
+    linear-gradient(to right, rgba(26, 24, 20, 0.22) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(to bottom, rgba(26, 24, 20, 0.22) 1px, transparent 1px) 0 0 / 56px 56px;
+  animation: gridfade var(--loop) ease-in-out infinite;
+}
+
+.cards {
+  position: absolute;
+  inset: var(--card-inset);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: var(--card-gap);
+  animation: join var(--loop) ease-in-out infinite;
+}
+
+.card {
+  position: relative;
+  padding: 12px;
+}
+
+.paper {
+  background: var(--paper);
+}
+
+/*
+ * The rule around a paper card is an overlay, not a border: an element gets
+ * only one winning `animation` declaration, and the card already spends its
+ * own on drifting. Off the border, the rule can dissolve on its own schedule.
+ */
+.paper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--ink);
+  animation: seam var(--loop) ease-in-out infinite;
+}
+
+.ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.blue {
+  background: var(--blue);
+  color: var(--paper);
+}
+
+/*
+ * Leading, not 1, because the longest label ("PURCHASE ORDERS") outruns a card
+ * once the section drops to one column. Wrapping is the intended failure here;
+ * set 1 and the two lines collide. The bars below just shift down with it.
+ */
+.label {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+}
+
+.paper .label {
+  color: var(--ochre-ink);
+}
+
+.ink .label {
+  color: var(--ochre);
+}
+
+.bar {
+  height: 6px;
+  margin-top: 6px;
+  background: rgba(26, 24, 20, 0.24);
+}
+
+.bar:first-of-type {
+  margin-top: 10px;
+}
+
+.ink .bar {
+  background: rgba(245, 242, 234, 0.32);
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.cell {
+  height: 14px;
+  background: rgba(26, 24, 20, 0.22);
+}
+
+.cellActive {
+  background: var(--ochre);
+}
+
+.statValue {
+  margin-top: 8px;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.statCaption {
+  font-size: 9px;
+  line-height: 1.3;
+  opacity: 0.85;
+}
+
+/* --- the system the six cards resolve into ------------------------------ */
+
+/*
+ * Same box the cards tile, so this rule lands on their outer edge as their own
+ * rules fade. Six framed things become one framed thing: the whole argument.
+ */
+.system {
+  position: absolute;
+  inset: var(--card-inset);
+  border: 2px solid var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  animation: systemIn var(--loop) ease-in-out infinite;
+}
+
+.systemTag {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 5px 9px;
+  background: var(--ochre);
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.12em;
+}
+
+/* --- the clock ---------------------------------------------------------- */
+
+/* Gutters close, so the cards stop being six objects with space between them. */
+@keyframes join {
+  0%,
+  36% {
+    gap: var(--card-gap);
+  }
+  46%,
+  76% {
+    gap: 0px;
+  }
+  86%,
+  100% {
+    gap: var(--card-gap);
+  }
+}
+
+/* The rules between the paper cards go last, once they are already touching. */
+@keyframes seam {
+  0%,
+  38% {
+    border-color: var(--ink);
+  }
+  48%,
+  76% {
+    border-color: transparent;
+  }
+  84%,
+  100% {
+    border-color: var(--ink);
+  }
+}
+
+@keyframes systemIn {
+  0%,
+  40% {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+  50%,
+  76% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  84%,
+  100% {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+}
+
+@keyframes gridfade {
+  0%,
+  14% {
+    opacity: 0;
+  }
+  46%,
+  76% {
+    opacity: 0.55;
+  }
+  88%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Each card leaves the pile on its own beat, and all six are in by 33%. */
+@keyframes drift1 {
+  0%,
+  4% {
+    transform: translate(-30px, 24px) rotate(-8deg);
+  }
+  18%,
+  84% {
+    transform: none;
+  }
+  100% {
+    transform: translate(-30px, 24px) rotate(-8deg);
+  }
+}
+
+@keyframes drift2 {
+  0%,
+  4% {
+    transform: translate(26px, -16px) rotate(6deg);
+  }
+  21%,
+  84% {
+    transform: none;
+  }
+  100% {
+    transform: translate(26px, -16px) rotate(6deg);
+  }
+}
+
+@keyframes drift3 {
+  0%,
+  4% {
+    transform: translate(-16px, -28px) rotate(11deg);
+  }
+  24%,
+  84% {
+    transform: none;
+  }
+  100% {
+    transform: translate(-16px, -28px) rotate(11deg);
+  }
+}
+
+@keyframes drift4 {
+  0%,
+  4% {
+    transform: translate(32px, 18px) rotate(-5deg);
+  }
+  27%,
+  84% {
+    transform: none;
+  }
+  100% {
+    transform: translate(32px, 18px) rotate(-5deg);
+  }
+}
+
+@keyframes drift5 {
+  0%,
+  4% {
+    transform: translate(-24px, -10px) rotate(4deg);
+  }
+  30%,
+  84% {
+    transform: none;
+  }
+  100% {
+    transform: translate(-24px, -10px) rotate(4deg);
+  }
+}
+
+@keyframes drift6 {
+  0%,
+  4% {
+    transform: translate(18px, 30px) rotate(-9deg);
+  }
+  33%,
+  84% {
+    transform: none;
+  }
+  100% {
+    transform: translate(18px, 30px) rotate(-9deg);
+  }
+}
+
+.drift1 {
+  animation: drift1 var(--loop) ease-in-out infinite;
+}
+.drift2 {
+  animation: drift2 var(--loop) ease-in-out infinite;
+}
+.drift3 {
+  animation: drift3 var(--loop) ease-in-out infinite;
+}
+.drift4 {
+  animation: drift4 var(--loop) ease-in-out infinite;
+}
+.drift5 {
+  animation: drift5 var(--loop) ease-in-out infinite;
+}
+.drift6 {
+  animation: drift6 var(--loop) ease-in-out infinite;
+}
+
+/*
+ * Without motion the point still has to land, so hold the resolved state:
+ * one block, no gutters, no internal rules, frame and tag up.
+ *
+ * Paired with the attribute rules below; see globals.css for why it is two
+ * blocks rather than one. This is the pair that matters most in the suite: this
+ * diagram is carrying an argument, so a reader who stops the loop has to be left
+ * looking at the conclusion, not at six boxes frozen wherever they were.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .cards {
+    gap: 0;
+  }
+
+  .paper::after {
+    border-color: transparent;
+  }
+
+  .graph {
+    opacity: 0.55;
+  }
+
+  .system {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+:root[data-motion="off"] .cards {
+  gap: 0;
+}
+
+:root[data-motion="off"] .paper::after {
+  border-color: transparent;
+}
+
+:root[data-motion="off"] .graph {
+  opacity: 0.55;
+}
+
+:root[data-motion="off"] .system {
+  opacity: 1;
+  transform: none;
+}

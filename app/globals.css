@@ -1,173 +1,90 @@
-@import "bootstrap/dist/css/bootstrap.min.css";
+@import "tailwindcss";
 
-:root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-montserrat), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-/* Dark theme overrides for Bootstrap */
-.bg-light {
-  background-color: transparent !important;
-}
-
-.text-muted {
-  color: #999 !important;
-}
-
-.border-end {
-  border-color: var(--sidebar-border) !important;
-}
-
-.card {
-  background-color: #1a1a1a;
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.badge {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  color: var(--foreground) !important;
-}
-
-/* Tech Badge Styling */
-.tech-badge {
-  display: inline-block;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: default;
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
-  backdrop-filter: blur(10px);
-  position: relative;
-}
-
-.tech-badge:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 4px 16px currentColor;
-  filter: brightness(1.2);
-  border-color: currentColor !important;
-}
-
-.btn-outline-primary {
-  border-color: rgba(255, 255, 255, 0.2);
-  color: var(--foreground);
-}
-
-.btn-outline-primary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: var(--foreground);
-}
-
-.btn-outline-secondary {
-  border-color: rgba(255, 255, 255, 0.2);
-  color: var(--foreground);
-}
-
-.btn-outline-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: var(--foreground);
-}
-
-.nav-link {
-  color: var(--foreground) !important;
-}
-
-.nav-link:hover {
-  color: var(--foreground) !important;
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.nav-link.active {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  color: var(--foreground) !important;
-}
-
-a {
-  color: var(--foreground);
-  text-decoration: underline;
-}
-
-a:hover {
-  color: var(--foreground);
-  opacity: 0.8;
-}
-
-/* Minimal scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-/* Firefox scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-}
-
-/* Steam rising animation */
-@keyframes steam-rise {
-  0% {
-    transform: translateY(0) scaleX(1);
-    opacity: 0;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
-  10% {
-    opacity: 0.6;
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    /*
+     * The gutter is reserved whether or not a scrollbar is in it, so anything
+     * that locks scrolling cannot shift the page sideways as it opens. Both the
+     * mobile preview dialog and NavMenu's panel do that; the transition overlay
+     * was already causing the same jump.
+     */
+    scrollbar-gutter: stable;
   }
-  50% {
-    opacity: 0.4;
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    -webkit-font-smoothing: antialiased;
   }
-  100% {
-    transform: translateY(-40px) scaleX(0.8);
-    opacity: 0;
+
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
 }
 
-.steam-line {
-  position: absolute;
-  bottom: 60px;
-  width: 4px;
-  height: 30px;
-  background: linear-gradient(to top, rgba(102, 126, 234, 0.6), rgba(102, 126, 234, 0));
-  border-radius: 50px;
-  z-index: 0;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
-.steam-1 {
-  left: 20%;
-  animation: steam-rise 2s ease-in-out infinite;
+/*
+ * The same treatment, asked for on the page instead of by the system: WCAG 2.2.2
+ * wants a way to stop the marquee and the ScatterGrid loop, and a system setting
+ * only reaches readers who have already found it. MotionToggle writes the
+ * attribute; app/lib/motion.ts explains why it only ever turns motion off.
+ *
+ * A second block rather than one merged selector, because CSS cannot OR a media
+ * query with a selector, and the query above has to keep standing alone so
+ * reduced motion still works with no JavaScript at all. The two must stay in
+ * step; every sheet in the suite with a reduced-motion block carries the same
+ * pair for the same reason.
+ *
+ * Collapsing durations rather than setting `animation: none`, because that is
+ * what the query does, and every animation in the suite has already been built
+ * to land somewhere sensible when it is done to them. Stopping motion any other
+ * way would mean re-checking all of them.
+ */
+:root[data-motion="off"] {
+  scroll-behavior: auto;
 }
 
-.steam-2 {
-  left:42.5%;
-  transform: translateX(-50%);
-  animation: steam-rise 2s ease-in-out infinite 0.3s;
+:root[data-motion="off"] *,
+:root[data-motion="off"] *::before,
+:root[data-motion="off"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
 }
 
-.steam-3 {
-  right: 30%;
-  animation: steam-rise 2s ease-in-out infinite 0.6s;
-}
+
+
+
+

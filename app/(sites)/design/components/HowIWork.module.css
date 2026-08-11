@@ -1,0 +1,102 @@
+/*
+ * Two cells, so the column count divides the item count at every width and one
+ * rule always falls between them. Counted columns rather than auto-fit so that
+ * rule can turn with the layout: under auto-fit the copy's border-right simply
+ * vanished when the grid stacked, and the prose ran straight into the sketch.
+ */
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.section > * + * {
+  border-top: 2px solid var(--rule);
+}
+
+@media (min-width: 700px) {
+  .section {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* The same single rule, turned ninety degrees. */
+  .section > * + * {
+    border-top: 0;
+    border-left: 2px solid var(--rule);
+  }
+}
+
+.copy {
+  padding: clamp(38px, 5.5vw, 68px) var(--gutter);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.kicker {
+  margin-bottom: 20px;
+}
+
+.headline {
+  margin: 0;
+  font-size: clamp(30px, 4.2vw, 54px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  white-space: pre-line;
+}
+
+/*
+ * A line of the headline, not a heading of its own. Block, and all three of the
+ * reasons are load-bearing: it is what breaks the lines without a <br>, it is
+ * what lets .headlineAccent's top margin apply at all, and transform (which
+ * .reveal animates these with) does nothing to an inline box.
+ *
+ * The 12px below still measures 12px: adjacent siblings inside the h2 collapse
+ * to the larger of the two margins, which is the same gap the second <h2> used
+ * to hold as a flex item.
+ */
+.headlineLine {
+  display: block;
+}
+
+.headlineAccent {
+  margin: 12px 0 0;
+  color: var(--blue);
+}
+
+.body {
+  margin: 22px 0 0;
+  max-width: 440px;
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.65;
+  color: var(--ink-80);
+}
+
+.principles {
+  display: grid;
+  gap: 12px;
+  margin-top: 26px;
+  max-width: 440px;
+}
+
+.principle {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  border-top: 1px solid var(--hair);
+  padding-top: 12px;
+}
+
+.principleNumber {
+  flex: none;
+  width: 22px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--ochre-ink);
+}
+
+.principleText {
+  font-size: 14px;
+  line-height: 1.45;
+}

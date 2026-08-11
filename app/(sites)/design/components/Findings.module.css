@@ -1,0 +1,95 @@
+/*
+ * A band inside a render frame. The 2px rule is the same one frameHeader uses to
+ * divide a header off: it separates without breaking the artifact in two.
+ */
+.block {
+  border-top: 2px solid var(--ink);
+  padding: clamp(18px, 2.2vw, 26px) clamp(14px, 1.8vw, 22px) clamp(13px, 1.6vw, 19px);
+}
+
+/* Held at the frameHeader size on purpose: it is the same kind of label. */
+.label {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  color: var(--ochre-ink);
+}
+
+/*
+ * Counted columns, not auto-fit. The track count has to divide the number of
+ * findings or the last row trails empty cells, and auto-fit cannot express
+ * "never four": at full width it fits exactly that, leaving 4 + 2.
+ *
+ * Two divides any even block, so the middle breakpoint is fixed. Three does not,
+ * so the widest one reads --finding-columns, which Findings.tsx sets to 3 only
+ * when the count divides by it. That is what lets a block be cut from six to
+ * four without the widest layout going ragged.
+ *
+ * The third column waits until 1150px rather than 1000px. Below that it splits
+ * the text to roughly 43 characters a line, which is where a wider type size
+ * stops being more readable and starts being a column of two-word rows.
+ */
+.findings {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 clamp(20px, 2.6vw, 38px);
+  counter-reset: finding;
+  margin: 11px 0 0;
+  padding: 0;
+  list-style: none;
+  /* Fallback for the value the component supplies inline. */
+  --finding-columns: 2;
+}
+
+@media (min-width: 640px) {
+  .findings {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1150px) {
+  .findings {
+    grid-template-columns: repeat(var(--finding-columns), minmax(0, 1fr));
+  }
+}
+
+.finding {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  counter-increment: finding;
+  border-top: 1px solid var(--hair);
+  padding: 13px 0;
+}
+
+/*
+ * Generated rather than carried in the data: the count is an ordinal, and one
+ * that goes stale the moment a finding is added or dropped.
+ */
+.finding::before {
+  content: counter(finding, decimal-leading-zero);
+  flex: none;
+  width: 21px;
+  font-size: 11.5px;
+  font-weight: 800;
+  line-height: 1.55;
+  color: var(--ochre-ink);
+}
+
+/*
+ * Scales with the viewport rather than sitting at one size, because the column
+ * count changes underneath it: the same measure has to hold at one column on a
+ * phone and at three across a desktop frame.
+ */
+.text {
+  min-width: 0;
+  font-size: clamp(13.5px, 1.02vw, 15px);
+  line-height: 1.55;
+  color: var(--ink-80);
+}
+
+.lead {
+  font-weight: 700;
+  color: var(--ink);
+}

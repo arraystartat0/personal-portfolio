@@ -1,0 +1,587 @@
+/*
+ * Same UBC palette as the three page renders, repeated for the same reason: one
+ * mockup must not inherit another's scope by accident.
+ *
+ * What is different here is scale. The renders above sit at page size, where 9px
+ * type stands in for a real paragraph. This is the component itself, and every
+ * control in it is a real hit target that a real hand and a real keyboard have
+ * to reach, so the type runs at a size a control is allowed to be.
+ */
+.calendar {
+  --ins-ink: #1b2733;
+  --ins-band: #002145;
+  --ins-accent: #0055B7;
+  --ins-accent-soft: #e4f1fa;
+  --ins-page: #f7f9fb;
+  --ins-muted: rgba(27, 39, 51, 0.7);
+  --ins-hair: rgba(0, 33, 69, 0.14);
+  --ins-line: rgba(0, 33, 69, 0.28);
+  --ins-radius: 14px;
+  --ins-radius-sm: 9px;
+
+  padding: clamp(14px, 1.8vw, 22px);
+  background: var(--ins-page);
+  color: var(--ins-ink);
+}
+
+/*
+ * Higher specificity than the design site's own :focus-visible rule so the ring
+ * belongs to the institute rather than to the portfolio around it. #0055B7 on
+ * white clears 3:1 against both the card and the page, which is the floor for a
+ * control's focus indicator.
+ */
+.calendar button:focus-visible {
+  outline: 2px solid var(--ins-accent);
+  outline-offset: 3px;
+  /*
+   * A light gap between the cell's own border and the ring. The arrows move the
+   * selection with the focus, so the focused day is always the selected one, and
+   * a blue ring sitting straight on the selection's navy border reads as one
+   * thicker border rather than as focus.
+   */
+  box-shadow: 0 0 0 3px var(--ins-page);
+}
+
+/* Keeps the selected cell's lift while it is the focused one. */
+.day.daySelected:focus-visible {
+  box-shadow:
+    0 8px 18px -14px rgba(0, 33, 69, 0.8),
+    0 0 0 3px var(--ins-page);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- head ---------------------------------------------------------------- */
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.title {
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+
+.monthNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.monthButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ins-line);
+  border-radius: 999px;
+  background: #ffffff;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--ins-ink);
+  cursor: pointer;
+}
+
+.monthButton:hover:not(:disabled) {
+  border-color: var(--ins-accent);
+  color: var(--ins-accent);
+}
+
+.monthButton:disabled {
+  opacity: 0.38;
+  cursor: default;
+}
+
+.monthLabel {
+  min-width: 11ch;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* --- filters ------------------------------------------------------------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+/*
+ * Type is carried by the glyph and the word. The colour of a pressed filter is
+ * the third signal, never the only one, which is what lets the same control work
+ * for a reader who cannot separate four hues.
+ */
+.filter,
+.filterOn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 5px 12px;
+  border: 1px solid var(--ins-line);
+  border-radius: 999px;
+  background: #ffffff;
+  font: inherit;
+  font-size: 11.5px;
+  line-height: 1.2;
+  color: var(--ins-ink);
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    border-color 0.18s,
+    color 0.18s;
+}
+
+.filter:hover {
+  border-color: var(--ins-accent);
+  color: var(--ins-accent);
+}
+
+.filterOn {
+  border-color: var(--ins-band);
+  background: var(--ins-band);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.filterGlyph {
+  font-size: 9px;
+  line-height: 1;
+}
+
+.filterCount {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--ins-accent-soft);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ins-band);
+}
+
+.filterOn .filterCount {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.clear {
+  min-height: 30px;
+  padding: 5px 12px;
+  border: 1px dashed var(--ins-line);
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-size: 11.5px;
+  line-height: 1.2;
+  color: var(--ins-accent);
+  cursor: pointer;
+}
+
+.clear:hover {
+  border-style: solid;
+  border-color: var(--ins-accent);
+}
+
+.status {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--ins-muted);
+}
+
+/* --- grid ---------------------------------------------------------------- */
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (min-width: 820px) {
+  .body {
+    grid-template-columns: minmax(0, 1.6fr) minmax(240px, 1fr);
+  }
+}
+
+.grid {
+  width: 100%;
+  /*
+   * Fixed, so seven equal columns are guaranteed and a long event title can
+   * never widen one day into the next. The chip clips instead of the table
+   * reflowing, which is the failure mode worth having.
+   */
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 3px;
+}
+
+.caption {
+  padding-bottom: 8px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ins-muted);
+}
+
+.weekday {
+  padding: 4px 0;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--ins-muted);
+  text-align: center;
+}
+
+.cell,
+.empty {
+  padding: 0;
+  vertical-align: top;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  min-height: 62px;
+  padding: 6px 5px;
+  border: 1px solid var(--ins-hair);
+  border-radius: var(--ins-radius-sm);
+  background: #ffffff;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
+}
+
+.day:hover {
+  border-color: var(--ins-accent);
+}
+
+/*
+ * Selection is a 2px border and a filled number, not a background wash alone.
+ * A wash is the first thing to disappear in high-contrast mode and the first
+ * thing to become ambiguous next to today's marker.
+ */
+.daySelected {
+  border: 2px solid var(--ins-band);
+  padding: 5px 4px;
+  box-shadow: 0 8px 18px -14px rgba(0, 33, 69, 0.8);
+}
+
+.dayNumber {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ins-ink);
+}
+
+.daySelected .dayNumber {
+  color: var(--ins-band);
+}
+
+/* Today says the word. A ring on its own would be one more thing to decode. */
+.todayMark {
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: var(--ins-accent-soft);
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  color: var(--ins-band);
+}
+
+.chips {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.chip {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: var(--ins-accent-soft);
+  font-size: 9px;
+  line-height: 1.3;
+  color: var(--ins-band);
+}
+
+.chipGlyph {
+  flex: none;
+  font-size: 7.5px;
+}
+
+.chipText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * Below this the columns are too narrow for any title to survive truncation, so
+ * the chip becomes the glyph alone. The titles are not lost: the day button
+ * names every one of them in full through its aria-label, which is where a
+ * screen reader was reading them from in the first place.
+ */
+@media (max-width: 620px) {
+  .chipText {
+    display: none;
+  }
+
+  .chip {
+    justify-content: center;
+  }
+}
+
+/*
+ * A phone. Seven fixed columns on a 320px screen are about 42px wide, and
+ * table-layout: fixed means the grid cannot widen to accommodate anything: it
+ * just paints over the next day. So below this width the cell keeps the two
+ * things that need to be legible, the numeral and the chips, and everything
+ * that is a word becomes a mark.
+ *
+ * The same reasoning as .chipText above, applied to the rest of the cell. What
+ * is dropped is dropped from the picture only; the day button's aria-label
+ * still names today, and every event on it, in full.
+ */
+@media (max-width: 560px) {
+  .grid {
+    border-spacing: 2px;
+  }
+
+  .day {
+    min-height: 52px;
+    padding: 4px 3px;
+    gap: 3px;
+  }
+
+  .daySelected {
+    padding: 3px 2px;
+  }
+
+  /* The pill becomes the dot it always was underneath the word. */
+  .todayText {
+    display: none;
+  }
+
+  .todayMark {
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    background: var(--ins-band);
+  }
+
+  .more,
+  .hidden {
+    font-size: 8px;
+  }
+}
+
+.more,
+.hidden {
+  font-size: 8.5px;
+  line-height: 1.3;
+  color: var(--ins-muted);
+}
+
+/* A day emptied by the filter says so rather than reading as a free day. */
+.hidden {
+  font-style: italic;
+}
+
+/* --- day panel ----------------------------------------------------------- */
+
+.panel {
+  align-self: start;
+  padding: 13px;
+  border: 1px solid var(--ins-hair);
+  border-radius: var(--ins-radius);
+  background: #ffffff;
+}
+
+.panelDate {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ins-band);
+}
+
+.panelEmpty {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ins-muted);
+}
+
+.event {
+  margin-top: 11px;
+  padding-top: 11px;
+  border-top: 1px solid var(--ins-hair);
+}
+
+.eventType {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ins-muted);
+}
+
+.eventGlyph {
+  font-size: 8px;
+  color: var(--ins-band);
+}
+
+.eventTitle {
+  margin-top: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--ins-ink);
+}
+
+.eventMeta {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ins-muted);
+}
+
+.eventProblem {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: var(--ins-accent);
+}
+
+.eventProblemLabel {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 9px;
+  line-height: 1.6;
+  color: var(--ins-muted);
+}
+
+/* --- signing up ---------------------------------------------------------- */
+
+.signupRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.signup,
+.signupOn {
+  min-height: 30px;
+  padding: 6px 14px;
+  border: 1px solid var(--ins-accent);
+  border-radius: 999px;
+  background: var(--ins-accent);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+
+.signup:hover {
+  background: var(--ins-band);
+  border-color: var(--ins-band);
+}
+
+/*
+ * The registered state reverses the fill and adds a tick. aria-pressed carries
+ * it for a screen reader, the tick carries it without colour, and the fill
+ * carries it at a glance: three signals for one piece of state, because this is
+ * the one a member most needs to be sure about.
+ */
+.signupOn {
+  background: #ffffff;
+  color: var(--ins-band);
+  border-color: var(--ins-band);
+}
+
+.signupOn:hover {
+  background: var(--ins-accent-soft);
+}
+
+.seats,
+.seatsFull {
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: var(--ins-muted);
+}
+
+.seatsFull {
+  font-weight: 700;
+  color: var(--ins-band);
+}
+
+.openNote {
+  margin-top: 9px;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--ins-muted);
+}
+
+.note {
+  margin-top: 14px;
+  padding-top: 11px;
+  border-top: 1px solid var(--ins-hair);
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--ins-muted);
+}

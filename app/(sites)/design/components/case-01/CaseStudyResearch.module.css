@@ -1,0 +1,408 @@
+.body {
+  padding: clamp(18px, 2.4vw, 26px) var(--gutter) clamp(28px, 3.6vw, 44px);
+}
+
+.title {
+  max-width: 19ch;
+  font-size: clamp(28px, 5vw, 64px);
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 42px);
+  margin-top: clamp(20px, 2.6vw, 32px);
+}
+
+/*
+ * Three quarters to the prose, the rest to the meta list, which is all a column
+ * of short key/value rows needs. Explicit tracks rather than auto-fit: auto-fit
+ * cannot express "these two are not equal", and equal columns are what turned
+ * the second paragraph into a thing to compare rather than a thing to read next.
+ */
+@media (min-width: 900px) {
+  .intro {
+    grid-template-columns: minmax(0, 3fr) minmax(230px, 1fr);
+  }
+}
+
+/*
+ * The cap is not a contradiction of the 3fr above: on a wide monitor three
+ * quarters of a full-bleed band is a 150-character line, and a measure that long
+ * loses the reader between the end of one line and the start of the next. Below
+ * roughly 1500px the track is narrower than the cap and the 3fr governs.
+ */
+.introText {
+  display: grid;
+  align-content: start;
+  gap: clamp(13px, 1.3vw, 19px);
+  max-width: 76ch;
+}
+
+.thesisLead {
+  font-weight: 800;
+}
+
+/*
+ * Two beats, so the column count divides the item count at every width and the
+ * clipping band the other two studies need is not needed here: whichever
+ * direction the pair sits in, exactly one rule falls between them. Counted
+ * columns rather than auto-fit for the reason Findings.module.css counts its own.
+ *
+ * Deliberately not clipped, which is why this file carries a different pattern
+ * from .panels below. The architecture beat carries [[ia]] in the first line of
+ * its body and Term's tip rises above the word, clearing the top of the cell by
+ * a few pixels. A band with overflow: clip would eat it, and overflow-clip-margin
+ * has no per-side form that could spare the tip without also un-clipping the
+ * pixel the trick depends on.
+ *
+ * 640px rather than the 600px auto-fit was settling on, so the sheet has one
+ * fewer number in it: .metaRow and WorkIndex already turn there.
+ */
+.beats {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-top: 2px solid var(--rule);
+  border-bottom: 2px solid var(--rule);
+}
+
+/* Stacked: the single rule between the pair falls horizontally. */
+.beats > * + * {
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 640px) {
+  .beats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Side by side: the same single rule, turned ninety degrees. */
+  .beats > * + * {
+    border-top: 0;
+    border-left: 1px solid var(--rule);
+  }
+}
+
+/* --- card sort ---------------------------------------------------------- */
+
+.sketch {
+  margin-top: 16px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+
+.sketchHeader {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--hair);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  color: var(--ochre-ink);
+}
+
+.sketchHeaderMuted {
+  color: var(--ink-muted);
+}
+
+.sketchHeaderAccent {
+  background: var(--ochre);
+  color: var(--ink);
+}
+
+.clusters {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+}
+
+.cluster {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.clusterCount {
+  flex: none;
+  color: var(--ink-muted);
+}
+
+.sketchFooter {
+  padding: 9px 12px;
+  border-top: 1px solid var(--hair);
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--ink-muted);
+}
+
+/* --- information architecture ------------------------------------------- */
+
+.trees {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.tree {
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+
+.treeBody {
+  padding: 12px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.treeRoot {
+  font-weight: 800;
+}
+
+.treeBranch {
+  margin-left: 3px;
+  padding-left: 14px;
+  border-left: 1px solid var(--hair);
+}
+
+.treeBranchAccent {
+  margin-left: 3px;
+  padding-left: 14px;
+  border-left: 2px solid var(--ochre);
+}
+
+.treeLeaf {
+  margin-left: 3px;
+  padding-left: 28px;
+  border-left: 1px solid var(--hair);
+}
+
+.treeFootnote {
+  margin-top: 8px;
+  margin-left: 3px;
+  padding-left: 14px;
+  border-left: 1px solid var(--hair);
+  color: var(--ink-muted);
+}
+
+.treeFootnoteSoft {
+  color: rgba(26, 24, 20, 0.6);
+}
+
+.treeMuted {
+  color: var(--ink-muted);
+}
+
+/*
+ * Closes the study. Bottom rule only: the features band above already draws the
+ * line between them, and two adjacent 2px borders stack into a 4px band that
+ * reads as a mistake.
+ */
+.sources {
+  border-bottom: 2px solid var(--rule);
+}
+
+.sourcesInner {
+  padding: clamp(20px, 2.4vw, 28px) var(--gutter);
+}
+
+/* --- the features band --------------------------------------------------- */
+
+/*
+ * Inside the first feature, not above it, so the band's own 2px rule opens with
+ * the heading rather than cutting between the heading and the first thing it
+ * heads. The inset comes from .bigFeature, so all this owns is the air beneath.
+ */
+.featuresHead {
+  margin-bottom: clamp(20px, 2.4vw, 30px);
+}
+
+/*
+ * Set as a heading in ink, well clear of the 10px ochre kickers each feature
+ * opens with. Same size family as a beat title, so it reads as the parent of the
+ * five rather than a sixth sibling.
+ */
+.featuresTitle {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.featuresNote {
+  margin: 7px 0 0;
+  max-width: 60ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+/*
+ * The two features the institute named, at full width.
+ *
+ * The inset belongs to each feature, not to this container, so the rule each one
+ * draws reaches both edges of the band the way .panels' rule does. Padded here
+ * instead, the rules stop short and read as boxes that failed to reach rather
+ * than as dividers between features.
+ */
+.bigFeatures {
+  display: grid;
+  /* The air that used to belong to .featuresHead, now that the head is inside. */
+  margin-top: var(--band-gap);
+}
+
+/*
+ * Inset to --panel-inset rather than --gutter, so the copy lines up with the
+ * heading above and the three panels below: one band, one left edge, whatever
+ * the viewport.
+ *
+ * The air between features is this padding, not a grid gap. A 2px rule with its
+ * own air on both sides divides; the same rule floating in a gap just sits there.
+ */
+.bigFeature {
+  border-top: 2px solid var(--rule);
+  padding: clamp(24px, 3vw, 36px) var(--panel-inset) clamp(28px, 3.4vw, 42px);
+}
+
+.bigFeatureTitle {
+  margin-top: 11px;
+  max-width: 24ch;
+  font-size: clamp(20px, 2.2vw, 30px);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.bigFeatureBody {
+  margin: 10px 0 0;
+  max-width: 78ch;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-75);
+}
+
+/* The 2px rule again: one discrete artifact, the same as every other exhibit. */
+.bigFrame {
+  margin-top: clamp(14px, 1.8vw, 20px);
+}
+
+/*
+ * Three principles under auto-fit, so two columns with one cell trailing is
+ * reachable and skipping the rule on the last child cannot be right. The band
+ * clips and the grid overhangs by a pixel on both trailing edges instead, the
+ * same as the software study's bands. Nothing in a panel floats above its own
+ * top edge: the glossary terms here sit under a mock, well clear of the clip.
+ */
+.panelsBand {
+  overflow: clip;
+  border-top: 2px solid var(--rule);
+  border-bottom: 2px solid var(--rule);
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-right: -1px;
+  margin-bottom: -1px;
+}
+
+.panel {
+  padding: clamp(22px, 2.6vw, 32px) var(--panel-inset);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.panelBody {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-75);
+}
+
+.auditRows {
+  display: grid;
+  gap: 7px;
+  margin-top: 13px;
+}
+
+.auditRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid var(--hair);
+  padding-top: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.auditPending {
+  padding: 0 8px;
+  border: 1px dashed var(--ochre-ink);
+  color: var(--ochre-ink);
+}
+
+.instrumentList {
+  display: grid;
+  gap: 9px;
+  margin-top: 13px;
+}
+
+.instrument {
+  border-top: 1px solid var(--hair);
+  padding-top: 9px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.instrumentLead {
+  font-weight: 800;
+}
+
+/* --- the two render frames ---------------------------------------------- */
+
+.renders {
+  margin: var(--band-gap) var(--gutter) 0;
+}
+
+.transition {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 2px;
+}
+
+.transitionArrow {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--ochre-ink);
+}
+
+.transitionText {
+  max-width: 74ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(26, 24, 20, 0.72);
+}
+
+/*
+ * Names a screen inside the proposal frame. Same 2px rule as frameHeader, so
+ * two screens in one frame still read as one artifact with two parts.
+ */
+.screenLabel {
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--ink);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.12em;
+  color: var(--ochre-ink);
+}
+
+.screenLabelStacked {
+  border-top: 2px solid var(--ink);
+}

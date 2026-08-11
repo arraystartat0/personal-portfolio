@@ -1,0 +1,100 @@
+/*
+ * The credit on the left, the copyright on the right. Baseline alignment rather
+ * than centre, so the two lines sit on one another's line of type instead of on
+ * the middle of their boxes, which is what makes them read as one footer rule
+ * rather than two floated blocks.
+ *
+ * They wrap on a narrow screen and both fall to the left edge there, which is
+ * the right failure: the alternative is a right-aligned line under a
+ * left-aligned one with nothing to align to.
+ */
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 7px 16px;
+  padding: 26px var(--gutter);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+/*
+ * inline-flex so the heart is a box on the line rather than a word in it, and
+ * flex-wrap because at 320px the credit runs to two lines and a nowrap row would
+ * push the glyph off the side.
+ */
+.credit {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+/*
+ * The motion control and the copyright share the right-hand end of the rule, on
+ * the same baseline as the credit opposite. They wrap together and fall left on
+ * a narrow screen, the way the two halves of the footer already do.
+ */
+.end {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7px 16px;
+}
+
+/*
+ * Swiss, like everything else here: a dotted ink rule under the words, no box,
+ * no rounded corner, going solid ochre when it is on. The site's own vocabulary
+ * for "this word does something", which is the same treatment a glossary term
+ * gets, and deliberately nothing like the hub's version of this control.
+ *
+ * Unset rather than inherited on font and colour, because a button carries the
+ * user agent's own and this has to read as the line of type it sits in.
+ */
+.motion {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--ink-muted);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition:
+    color 0.2s var(--ease),
+    text-decoration-color 0.2s var(--ease);
+}
+
+.motion:hover {
+  color: var(--ink);
+  text-decoration-color: var(--ink);
+}
+
+/*
+ * Pressed is the state worth seeing at a glance, so it takes the ochre and the
+ * solid rule: motion is off, and the control says so without the label changing
+ * under a screen reader that has already announced it.
+ */
+.motion[aria-pressed="true"] {
+  color: var(--ochre-ink);
+  text-decoration-style: solid;
+  text-decoration-color: var(--ochre);
+}
+
+/*
+ * The one colour on this sheet that is not paper, ink, blue or ochre, and it is
+ * deliberate: a heart set in the ink grey the rest of the line uses reads as a
+ * bullet, not as a heart. Held to a rose dark enough to stay legible on paper
+ * rather than the pale pink the glyph is usually given.
+ */
+.heart {
+  color: #d6336c;
+  /* A shade below the baseline, which is where a heart wants to sit between two
+     words rather than riding on top of them. */
+  transform: translateY(1px);
+}

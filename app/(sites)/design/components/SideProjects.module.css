@@ -1,0 +1,111 @@
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: clamp(38px, 5vw, 72px) var(--gutter) clamp(16px, 2vw, 24px);
+}
+
+.heading {
+  margin: 0;
+  font-size: clamp(24px, 3.2vw, 40px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.intro {
+  max-width: 44ch;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+/*
+ * clip, not hidden, so the sticky nav is never trapped in a scrollport.
+ *
+ * The rule across the top is back. It was cut once on the grounds that the
+ * heading introduces the cards and a band between them made it read as a
+ * finished block sitting on a separate grid. Read against the rest of the page
+ * that argument loses: every other band on this site opens on a 2px rule, so the
+ * one that did not was the odd section rather than the subtle one.
+ */
+.gridBand {
+  overflow: clip;
+  border-top: 2px solid var(--rule);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-right: -1px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(22px, 2.6vw, 32px) clamp(18px, 3vw, 32px);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  transition:
+    background 0.28s,
+    color 0.28s,
+    transform 0.28s;
+}
+
+.card:hover {
+  background: var(--ink);
+  color: var(--paper);
+  transform: translateY(-3px);
+}
+
+.kicker {
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  color: var(--ochre-ink);
+  transition: color 0.28s;
+}
+
+.card:hover .kicker {
+  color: var(--ochre);
+}
+
+.title {
+  margin-top: 10px;
+  font-size: clamp(19px, 1.8vw, 23px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.body {
+  margin: 9px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0.78;
+}
+
+/*
+ * Pushed to the bottom of the card so it sits on one line across the row
+ * whatever length the bodies above it run to. The arrow is → because this
+ * navigates to another site, not ↓ to more of this page.
+ */
+.more {
+  margin-top: auto;
+  padding-top: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.card:hover .more {
+  color: var(--ochre);
+}
