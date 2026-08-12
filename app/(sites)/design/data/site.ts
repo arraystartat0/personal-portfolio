@@ -7,15 +7,23 @@ export interface NavLink {
 }
 
 /*
- * "Design engineer" rather than "Web designer", and the same two words in the
+ * "Designer & developer" rather than "Web designer", and the same phrase in the
  * hero's Currently line and the contact kicker. Three strings used to name the
  * job three ways, which left a reader to guess which one was the offer; the
  * evidence on this page is a designer who ships the thing, so that is the lane
  * it claims. Change one of the three and change all three.
+ *
+ * It read "Design engineer" until an engineering student pointed out that the
+ * title is the problem: "engineer" is reserved in BC to licensed EGBC members,
+ * and using it of yourself is the claim that gets made, whatever the work
+ * behind it looks like. The two-word title said the right thing and was not
+ * ours to say. Naming both halves says the same thing and claims nothing.
+ * Do not put it back. Note the ampersand is the nav and hero form; running
+ * prose spells it "and" (see the /design metadata).
  */
 export const brand = {
   name: "MANEET BHATT",
-  discipline: "Design engineer",
+  discipline: "Designer & developer",
 };
 
 /*

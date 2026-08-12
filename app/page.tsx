@@ -112,7 +112,7 @@ export default function Hub() {
           <MotionToggle className={styles.motion} />
         </div>
         <div className={styles.copyright}>
-          © {new Date().getFullYear()} {profile.name} · {profile.location}
+          © {new Date().getFullYear()} {profile.studio} · {profile.location}
         </div>
       </footer>
     </main>

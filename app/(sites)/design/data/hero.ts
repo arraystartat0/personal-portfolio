@@ -26,7 +26,7 @@ export const hero = {
   currently: {
     label: "Currently",
     // One lane, named the same way in site.ts and contact.ts. See brand there.
-    role: "Design engineer",
+    role: "Designer & developer",
     company: " @ Blitz Packaging Ltd.",
     href: "https://blitzpackaging.co.ug",
     hrefLabel: "blitzpackaging.co.ug ↗",

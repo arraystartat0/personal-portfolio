@@ -7,6 +7,12 @@ export interface Channel {
 /** Identity for the hub. Each site restates this in its own voice. */
 export const profile = {
   name: "Maneet Bhatt",
+  /**
+   * The wordmark is the person; the copyright is the studio. Nothing on any of
+   * the three sites is copyright a personal name. The design site says the same
+   * thing in its own file (`footer.copyright` in design/data/site.ts).
+   */
+  studio: "Bhatt Studios",
   monogram: "MB",
   location: "Vancouver, BC",
   availability: "Open to work",

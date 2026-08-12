@@ -6,8 +6,11 @@ export interface ContactChannel {
 }
 
 export const contact = {
-  // Same two words as the nav discipline and the hero's Currently. See site.ts.
-  kicker: "Available for design engineer roles · Vancouver & remote",
+  /*
+   * Same phrase as the nav discipline and the hero's Currently. See site.ts.
+   * The tail spells "and" so the line does not carry two ampersands.
+   */
+  kicker: "Available for designer & developer roles · Vancouver and remote",
   headline: { lead: "Got a mess?\nLet's give it ", accent: "a shape." },
   channels: [
     {
