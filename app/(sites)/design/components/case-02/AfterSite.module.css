@@ -70,10 +70,13 @@
   border-bottom: 1px solid #eef0f5;
 }
 
+/* The same slug as the before render, and the same reason it is darker: it is
+   text reading "[ LOGO ]", not the client's mark. 0.55 measured 3.62:1 at
+   8.5px; 0.66 is 5.07:1. The dashed border still says it is a stand-in. */
 .logo {
   padding: 8px;
   border: 1px dashed rgba(32, 36, 46, 0.35);
-  color: rgba(32, 36, 46, 0.55);
+  color: rgba(32, 36, 46, 0.66);
   font-size: 8.5px;
   font-weight: 700;
   line-height: 1.3;

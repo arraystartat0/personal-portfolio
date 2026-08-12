@@ -26,10 +26,16 @@
   background: #fff;
 }
 
+/*
+ * The slug standing in for the client's mark, which is theirs and is not drawn
+ * here. It reads "[ LOGO ]", so it is real text with no logotype exemption to
+ * lean on, and at 9px the grey it used to be measured 3.36:1. Darkened; the box
+ * stays dashed, which is what says "not the real thing".
+ */
 .logo {
   padding: 10px;
   border: 1px dashed #b9b9c4;
-  color: #8b8b98;
+  color: #6d6d78;
   font-size: 9px;
   font-weight: 700;
   line-height: 1.3;

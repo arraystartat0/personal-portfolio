@@ -23,6 +23,22 @@
    * deliberately above the 0.61 floor rather than on it.
    */
   --ink-muted: rgba(26, 24, 20, 0.64);
+  /*
+   * The same floor again, for the one case --ink-muted cannot serve: text that
+   * has to mute itself over two different backgrounds. A row that flips paper to
+   * blue on hover, or a panel painted blue outright, cannot name a colour, so it
+   * reaches for `opacity` instead and quietly steps around the token above.
+   *
+   * That is how three values ended up below the floor: .meta at 0.5 (3.29:1),
+   * Contact's .label at 0.65 (4.03:1), and .summary at 0.62, which passed on
+   * paper at 4.77:1 and failed at 3.81:1 the moment its row went blue.
+   *
+   * Muting over paper is the loose constraint and over blue the tight one: ink
+   * on paper clears 4.5:1 from 0.60, paper on blue not until 0.72. 0.76 is the
+   * first round step clear of both (7.62:1 and 4.95:1). The invariant is
+   * greppable: no `opacity` on text below this token.
+   */
+  --muted-alpha: 0.76;
   /* Rules and borders, not text. Decorative, so 1.4.3 does not reach it. */
   --ink-22: rgba(26, 24, 20, 0.22);
   /*
@@ -483,16 +499,6 @@
 
 .metricArrow {
   color: var(--ink-muted);
-}
-
-.metricPlaceholder {
-  display: inline-block;
-  padding: 2px 10px;
-  border: 1px dashed var(--ochre-ink);
-  font-size: clamp(24px, 2.6vw, 34px);
-  font-weight: 800;
-  line-height: 1;
-  color: var(--ochre-ink);
 }
 
 .metricLabel {

@@ -124,8 +124,15 @@
   line-height: 1.35;
 }
 
-.clusterCount {
-  flex: none;
+/*
+ * Allowed to shrink and wrap, unlike the headcount it replaced. A department
+ * list is as long as the problem is cross-cutting, and the longest of them is
+ * four names; pinned at flex: none it would push the problem name out of the
+ * sketch rather than take a second line.
+ */
+.clusterDepartments {
+  min-width: 0;
+  text-align: right;
   color: var(--ink-muted);
 }
 
@@ -186,10 +193,14 @@
   color: var(--ink-muted);
 }
 
-.treeFootnoteSoft {
-  color: rgba(26, 24, 20, 0.6);
-}
-
+/*
+ * Gone, not darkened. This was a sixth muted rung that outlived the collapse to
+ * one described in design.module.css: 0.6 alpha, measured 4.47:1, under the
+ * floor by the width of a rounding error. It existed to make the proposed
+ * tree's footnote read as demoted, which is the right idea and the wrong tool,
+ * because the compliant version of it is --ink-muted, which is what the footnote
+ * beside it already uses. The demotion is carried by the tree, not by the grey.
+ */
 .treeMuted {
   color: var(--ink-muted);
 }

@@ -6,14 +6,19 @@
  * colours against what is actually painted behind them, reflow needs a viewport,
  * and both are exactly where a hand audit stops being trustworthy.
  *
+ * What this does NOT cover, so nobody reads a PASS as more than it is: every
+ * measurement here is of the page at rest. axe cannot force :hover, so text that
+ * mutes itself over a background that changes on hover is invisible to this run,
+ * and the work index rows, which flip paper to blue, are exactly that case. That
+ * gap is held by --muted-alpha in design.module.css instead: one floor picked
+ * against both backgrounds, so the compliant value is the only one to reach for.
+ *
  * Run: npm run a11y   (requires npm run build first)
  */
-import { spawn } from "node:child_process";
 import { chromium } from "playwright";
 import AxeBuilder from "@axe-core/playwright";
+import { startServer } from "./serve.mjs";
 
-const PORT = 4321;
-const BASE = `http://127.0.0.1:${PORT}`;
 const ROUTES = ["/", "/design", "/swe", "/embedded"];
 
 /* The four tags that together are WCAG 2.1 Level AA. */
@@ -27,24 +32,6 @@ const VIEWPORTS = [
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function serve() {
-  const server = spawn("npx", ["next", "start", "-p", String(PORT)], {
-    stdio: "ignore",
-    shell: process.platform === "win32",
-  });
-  for (let i = 0; i < 60; i += 1) {
-    try {
-      const res = await fetch(BASE);
-      if (res.ok) return server;
-    } catch {
-      /* not up yet */
-    }
-    await wait(500);
-  }
-  server.kill();
-  throw new Error("next start did not come up on " + BASE);
-}
-
 /*
  * Everything folded away is still content, and <details> is how this site hides
  * its source lists and disclaimers. axe skips what is not rendered, so a run
@@ -57,7 +44,7 @@ const openDisclosures = (page) =>
     });
   });
 
-const server = await serve();
+const { base: BASE, stop } = await startServer();
 const browser = await chromium.launch();
 let violations = 0;
 let incomplete = 0;
@@ -93,7 +80,12 @@ try {
         for (const v of results.violations) {
           violations += 1;
           console.log(`  [${v.impact}] ${v.id} — ${v.help}  (${v.nodes.length} nodes)`);
-          for (const n of v.nodes.slice(0, 4)) {
+          /*
+           * All of them, not the first four. Fixing the worst offender only
+           * uncovers the next one under the cap, so a truncated list turns one
+           * pass into five and makes the run look like it is getting worse.
+           */
+          for (const n of v.nodes) {
             console.log(`      ${n.target.join(" ")}`);
             const msg = (n.failureSummary || "").split("\n").filter(Boolean).pop();
             if (msg) console.log(`        ${msg.trim()}`);
@@ -159,7 +151,7 @@ try {
   }
 } finally {
   await browser.close();
-  server.kill();
+  stop();
 }
 
 console.log("\n" + "-".repeat(60));

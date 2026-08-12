@@ -25,7 +25,8 @@ export const hero = {
     "Small businesses get offered two bad options: a licence they can't afford, or a template that flattens them into everyone else. I design the brand and the interface around how a business actually works, then build the system underneath it, so it stays theirs to change.",
   currently: {
     label: "Currently",
-    role: "Web Designer & Full Stack Developer",
+    // One lane, named the same way in site.ts and contact.ts. See brand there.
+    role: "Design engineer",
     company: " @ Blitz Packaging Ltd.",
     href: "https://blitzpackaging.co.ug",
     hrefLabel: "blitzpackaging.co.ug ↗",

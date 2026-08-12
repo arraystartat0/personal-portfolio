@@ -29,7 +29,9 @@ export const sites: SiteEntry[] = [
     status: "live",
     statusLabel: "Open",
     accentRgb: "224 162 51",
-    tags: ["Brand systems", "Figma", "Design systems", "WCAG 2.1 AA"],
+    /* One build tag among the design ones, because the work behind this link is
+       a designer who ships it. "Design" is the discipline; the lane is narrower. */
+    tags: ["Brand systems", "Figma", "React", "WCAG 2.1 AA"],
   },
   {
     slug: "swe",

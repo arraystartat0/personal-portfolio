@@ -6,9 +6,16 @@ export interface NavLink {
   external?: boolean;
 }
 
+/*
+ * "Design engineer" rather than "Web designer", and the same two words in the
+ * hero's Currently line and the contact kicker. Three strings used to name the
+ * job three ways, which left a reader to guess which one was the offer; the
+ * evidence on this page is a designer who ships the thing, so that is the lane
+ * it claims. Change one of the three and change all three.
+ */
 export const brand = {
   name: "MANEET BHATT",
-  discipline: "Web designer",
+  discipline: "Design engineer",
 };
 
 /*
@@ -20,8 +27,6 @@ export const brand = {
  * way `resume-design.pdf` in a flat folder does not. The folder names are the
  * site slugs, so the URL matches the site the file belongs to. Nothing routes
  * at these paths, so the static file is what answers.
- *
- * Placeholder until the PDF lands there.
  */
 export const resumeHref = "/design/resume.pdf";
 
@@ -73,16 +78,24 @@ export const mobilePreview = {
   close: "Exit",
 };
 
+/*
+ * Bootstrap, WordPress, PHP and MySQL came out; TypeScript went in, which this
+ * site is written in. The four that left are real and they are the HR portal's
+ * stack, which still names them on its own card, but a list long enough to hold
+ * every tool ever opened stops reading as a toolkit and starts reading as a
+ * résumé keyword field.
+ *
+ * SEO and Claude API stay, though they look like the odd ones here. Both are
+ * load-bearing evidence: one is what the Blitz study measures, the other is
+ * what the intake feature in the sales study is built on.
+ */
 export const marqueeItems = [
   "FIGMA",
   "ILLUSTRATOR",
   "HTML/CSS/JS",
   "REACT",
   "NEXT.JS",
-  "BOOTSTRAP",
-  "WORDPRESS",
-  "PHP",
-  "MYSQL",
+  "TYPESCRIPT",
   "PYTHON",
   "SUPABASE",
   "DJANGO",

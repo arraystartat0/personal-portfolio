@@ -132,8 +132,16 @@
   background: rgba(217, 148, 20, 0.14);
 }
 
+/*
+ * A step darker than --ochre-ink, which this used to take straight. That token
+ * is set against paper, where it is 5.19:1, and this hint is the one place it
+ * lands on the ochre wash instead: measured there it was 4.28:1, at 10px. Its
+ * own value rather than a heavier --ochre-ink, so the metric accents and the
+ * side-project kickers that read correctly on paper are not dragged darker too.
+ * 4.97:1 on the wash.
+ */
 .ochre .hint {
-  color: var(--ochre-ink);
+  color: #7d5304;
 }
 
 .ochre .body {

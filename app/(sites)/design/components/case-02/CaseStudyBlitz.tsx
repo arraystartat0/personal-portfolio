@@ -1,6 +1,8 @@
 import { blitz } from "../../data/caseStudies";
+import { CASE_BLITZ_ID } from "../../lib/anchors";
 import ds from "../../styles/design.module.css";
 import BeatCard from "../BeatCard";
+import CaseGlance from "../CaseGlance";
 import { collectCites, SourceList } from "../Citations";
 import Findings from "../Findings";
 import GlossaryText from "../GlossaryText";
@@ -10,8 +12,13 @@ import AfterSite from "./AfterSite";
 import BeforeSite from "./BeforeSite";
 import styles from "./CaseStudyBlitz.module.css";
 
-/* One namespace for the study, so every marker resolves into the single list. */
-const CITE_ID = "c02";
+/*
+ * One namespace for the study, so every marker resolves into the single list.
+ * The study's own anchor, rather than a second string saying the same thing: it
+ * was "c02", which would now be naming the study by a position it no longer
+ * holds, and these ids go into footnote links a reader can land on.
+ */
+const CITE_ID = CASE_BLITZ_ID;
 
 const [insightBeat, craftBeat, handoverBeat] = blitz.beats;
 const { search, hero, handover } = blitz.beatMocks;
@@ -113,6 +120,8 @@ export default function CaseStudyBlitz() {
         <Reveal as="h2" className={`${ds.studyTitle} ${styles.title}`}>
           {blitz.title}
         </Reveal>
+
+        <CaseGlance glance={blitz.glance} />
 
         <div className={styles.intro}>
           <Reveal as="p" className={ds.lede} delayIndex={1}>

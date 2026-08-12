@@ -9,7 +9,8 @@
   --ins-accent: #0055B7;
   --ins-accent-soft: #e4f1fa;
   --ins-page: #f7f9fb;
-  --ins-muted: rgba(27, 39, 51, 0.64);
+  /* 0.68, so it clears the accent-soft chips too. See ScreenHome. */
+  --ins-muted: rgba(27, 39, 51, 0.68);
   --ins-line: rgba(0, 33, 69, 0.3);
   --ins-hair: rgba(0, 33, 69, 0.14);
   --ins-radius: 14px;

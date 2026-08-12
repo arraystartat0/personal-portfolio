@@ -43,9 +43,16 @@
   /*
    * Darkened from the app's own #8b8b8b, which measured 3.17:1 on the card and
    * carries 17 labels here at 9 to 11px. This render is text on a real page, so
-   * a grey the page cannot pass with is a grey the render cannot use. 4.93:1.
+   * a grey the page cannot pass with is a grey the render cannot use.
+   *
+   * Darkened again, from #6b6b70. That value was picked against --sx-card alone,
+   * where it measured 4.93:1, and this render has three backgrounds: the card,
+   * the darker --sx-ground the chrome sits on, and the #f8f9fa panels. On the
+   * ground it was 3.44:1. Same trap as --muted-alpha in the token sheet, one
+   * layer down: a muted value is only safe against every surface it lands on.
+   * #55555c is card 6.88:1, ground 4.79:1, panel 7.01:1.
    */
-  --sx-muted: #6b6b70;
+  --sx-muted: #55555c;
   --sx-ink: #000000;
   --sx-lime: #acd04d;
   --sx-border: #dee2e6;
@@ -96,10 +103,12 @@
   line-height: 1.2;
 }
 
+/* The token, not Bootstrap's #6c757d: this line sits on --sx-ground, where that
+   grey is 3.04:1. */
 .sub {
   font-size: 11px;
   line-height: 1.4;
-  color: #6c757d;
+  color: var(--sx-muted);
 }
 
 .stamp {
@@ -574,24 +583,38 @@
   background: rgba(177, 141, 255, 0.8);
 }
 
+/*
+ * The same five hues as the discs above, darkened until they can carry text.
+ *
+ * At full strength these are the live app's own values, and as 11.5px bold
+ * headings on --sx-card they ran 1.9:1 to 2.8:1. They read as colour rather than
+ * as writing, which is the whole failure: on the real dashboard the category is
+ * the first thing you are meant to be able to skim. Each one keeps its hue and
+ * moves down in lightness only, so the feed still colour-codes at a glance and
+ * the words are legible when you stop on one. 4.8:1 to 5.9:1.
+ *
+ * The discs keep the original values. A filled circle behind a white glyph is
+ * decorative here: every one of them has its category spelled out in the heading
+ * beside it, so nothing is carried by the colour alone.
+ */
 .orderText {
-  color: rgb(57, 175, 209);
+  color: #136c7d;
 }
 
 .quoteText {
-  color: rgb(135, 195, 143);
+  color: #3f7a49;
 }
 
 .customerText {
-  color: rgb(250, 92, 124);
+  color: #c01033;
 }
 
 .purchaseText {
-  color: rgb(255, 148, 71);
+  color: #a85413;
 }
 
 .reportText {
-  color: rgb(177, 141, 255);
+  color: #6b3fd4;
 }
 
 .timelineContent {
@@ -1086,7 +1109,8 @@
   font-size: 11px;
   font-weight: 500;
   line-height: 1.3;
-  color: #6b6f75;
+  /* The token. The app's own #6b6f75 is 3.41:1 on the #d3d4d6 track. */
+  color: var(--sx-muted);
 }
 
 .trashTabActive {
@@ -1103,7 +1127,7 @@
   padding: 0 5px;
   border-radius: 999px;
   background: #cfd0d3;
-  color: #6b6f75;
+  color: var(--sx-muted);
   font-size: 9.5px;
   font-weight: 600;
   line-height: 1;
@@ -1321,7 +1345,8 @@
   max-width: 32ch;
   font-size: 9.5px;
   line-height: 1.5;
-  color: #80848a;
+  /* The token. The app's own #80848a is 3.50:1 here, and this runs at 9.5px. */
+  color: var(--sx-muted);
 }
 
 /* --- footer ------------------------------------------------------------------------ */
@@ -1344,7 +1369,8 @@
   background: #f8f9fa;
   font-size: 10.5px;
   line-height: 1.5;
-  color: #6c757d;
+  /* The token, not Bootstrap's #6c757d, which is 4.45:1 on this panel. */
+  color: var(--sx-muted);
 }
 
 .footerLeft {

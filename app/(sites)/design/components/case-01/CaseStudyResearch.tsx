@@ -1,7 +1,9 @@
 import { researchIa } from "../../data/caseStudies";
 import { newsAndEvents } from "../../data/newsAndEvents";
+import { CASE_RESEARCH_ID } from "../../lib/anchors";
 import ds from "../../styles/design.module.css";
 import BeatCard from "../BeatCard";
+import CaseGlance from "../CaseGlance";
 import { CiteMarks, collectCites, SourceList } from "../Citations";
 import Disclosure from "../Disclosure";
 import Findings from "../Findings";
@@ -16,21 +18,21 @@ import ScreenNews, { EditorView } from "./ScreenNews";
 import ScreenProblem from "./ScreenProblem";
 import styles from "./CaseStudyResearch.module.css";
 
-const { cardSort, architecture, screens } = researchIa;
+const { contentAudit, architecture, screens } = researchIa;
 
-function CardSortSketch() {
+function ContentAuditSketch() {
   return (
     <div className={styles.sketch}>
-      <div className={styles.sketchHeader}>{cardSort.label}</div>
+      <div className={styles.sketchHeader}>{contentAudit.label}</div>
       <div className={styles.clusters}>
-        {cardSort.clusters.map((cluster) => (
+        {contentAudit.clusters.map((cluster) => (
           <div key={cluster.name} className={styles.cluster}>
             <span>{cluster.name}</span>
-            <span className={styles.clusterCount}>{cluster.count}</span>
+            <span className={styles.clusterDepartments}>{cluster.departments}</span>
           </div>
         ))}
       </div>
-      <div className={styles.sketchFooter}>{cardSort.note}</div>
+      <div className={styles.sketchFooter}>{contentAudit.note}</div>
     </div>
   );
 }
@@ -68,16 +70,15 @@ function ArchitectureSketch() {
             <span className={styles.treeMuted}>{proposed.primaryCount}</span>
           </div>
           <div className={styles.treeLeaf}>{proposed.children}</div>
-          <div className={`${styles.treeFootnote} ${styles.treeFootnoteSoft}`}>
-            {proposed.footnote}
-          </div>
+          <div className={styles.treeFootnote}>{proposed.footnote}</div>
         </div>
       </div>
     </div>
   );
 }
 
-const CITE_ID = "c01";
+/* The study's own anchor rather than a second string. See case-02. */
+const CITE_ID = CASE_RESEARCH_ID;
 
 /** Keyed by the `mock` field in the data, so copy chooses its own sketch. */
 const PANEL_MOCKS = {
@@ -111,6 +112,8 @@ export default function CaseStudyResearch() {
         <Reveal as="h2" className={`${ds.studyTitle} ${styles.title}`}>
           {researchIa.title}
         </Reveal>
+
+        <CaseGlance glance={researchIa.glance} />
 
         <div className={styles.intro}>
           {/*
@@ -148,11 +151,15 @@ export default function CaseStudyResearch() {
 
       <div className={styles.beats}>
         <BeatCard
-          beat={{ kicker: cardSort.kicker, title: cardSort.title, body: cardSort.body }}
+          beat={{
+            kicker: contentAudit.kicker,
+            title: contentAudit.title,
+            body: contentAudit.body,
+          }}
           scale="medium"
-          glossaryScope={`${CITE_ID}-cardsort`}
+          glossaryScope={`${CITE_ID}-content-audit`}
         >
-          <CardSortSketch />
+          <ContentAuditSketch />
         </BeatCard>
         <BeatCard
           beat={{
@@ -200,7 +207,10 @@ export default function CaseStudyResearch() {
           </div>
 
           <div className={styles.screenLabel}>{screens.homeKicker}</div>
-          <ScreenHome />
+          {/* data-thumb: scripts/thumbs.mjs photographs this for the work index. */}
+          <div data-thumb="research">
+            <ScreenHome />
+          </div>
 
           {/* Both screens in one frame, so they read as one product. */}
           <div className={`${styles.screenLabel} ${styles.screenLabelStacked}`}>

@@ -1,8 +1,17 @@
 /*
+/*
  * A desktop business application from about 2004, drawn in its own palette
  * rather than the study's: system grey, bevelled everything, 11px Tahoma, and
  * borders instead of space. None of the Swiss tokens reach in here on purpose,
  * because the frame is quoting something, not designing it.
+ *
+ * Quoting it, though, not reproducing its contrast failures. The greys here were
+ * the period-authentic ones and three of them sat under 4.5:1, which the footer
+ * two sections down promises this site does not do. The argument this mock makes
+ * is about density, grouping and recall; none of it needs the label to be hard
+ * to read, so each grey is darkened to the nearest value that clears the floor.
+ * If you add a colour in here, check it: the frame is exempt from the tokens,
+ * not from the standard.
  */
 .app {
   --erp-face: #d4d0c8;
@@ -11,7 +20,8 @@
   --erp-light: #ffffff;
   --erp-dark: #404040;
   --erp-ink: #101010;
-  --erp-muted: #5a5a5a;
+  /* 5.33:1 on --erp-face. Was #5a5a5a, which measured 4.48:1. */
+  --erp-muted: #4f4f4f;
   --erp-title: #0a246a;
 
   background: var(--erp-face);

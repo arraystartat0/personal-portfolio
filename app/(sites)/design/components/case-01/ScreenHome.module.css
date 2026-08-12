@@ -13,7 +13,14 @@
   --ins-accent: #0055B7;
   --ins-accent-soft: #e4f1fa;
   --ins-page: #f7f9fb;
-  --ins-muted: rgba(27, 39, 51, 0.64);
+  /*
+   * 0.68, not 0.64. These screens paint on three grounds: white cards, the
+   * --ins-page wash, and the --ins-accent-soft chips the department tags sit in.
+   * At 0.64 the tags measured 4.43:1 on the chip, at 8.5px. 0.68 is 5.32:1 on
+   * white, 4.99:1 on the chip and 5.20:1 on the page, so one value is safe
+   * wherever it lands. Same trap as --muted-alpha and --sx-muted.
+   */
+  --ins-muted: rgba(27, 39, 51, 0.68);
   --ins-line: rgba(0, 33, 69, 0.3);
   --ins-hair: rgba(0, 33, 69, 0.14);
   --ins-radius: 14px;

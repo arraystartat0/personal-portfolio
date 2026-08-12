@@ -41,20 +41,28 @@ export default function WorkIndex() {
               */}
               <h3 className={styles.title}>{row.title}</h3>
               <div className={styles.summary}>{row.summary}</div>
+              {/*
+                What it did, under what it was. This is the line that makes the
+                index readable on its own, for the reader who never opens a
+                study, so it is the one part of the row that does not mute.
+              */}
+              <div className={styles.outcome}>{row.outcome}</div>
             </div>
 
-            {/* No image, no slot: an empty one would still wipe open on hover. */}
-            {row.thumb && (
-              <div className={styles.thumb} aria-hidden="true">
-                <Image
-                  src={row.thumb}
-                  alt=""
-                  width={THUMB_WIDTH}
-                  height={THUMB_HEIGHT}
-                  className={styles.thumbImage}
-                />
-              </div>
-            )}
+            {/*
+              Every row has one now, so there is no conditional left: a slot that
+              appeared on one row and not the next read as a broken row rather
+              than a styled one.
+            */}
+            <div className={styles.thumb} aria-hidden="true">
+              <Image
+                src={row.thumb}
+                alt=""
+                width={THUMB_WIDTH}
+                height={THUMB_HEIGHT}
+                className={styles.thumbImage}
+              />
+            </div>
 
             <div className={styles.meta}>
               {row.discipline}

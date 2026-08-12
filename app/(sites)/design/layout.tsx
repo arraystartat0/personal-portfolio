@@ -24,8 +24,10 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Design",
+  /* Names the lane, because this string is the search result someone reads
+     before they decide whether to open the page at all. See site.ts. */
   description:
-    "Selected design work by Maneet Bhatt: brand, interface and the systems underneath them.",
+    "Design engineer in Vancouver. Selected work by Maneet Bhatt: brand, interface and the systems underneath them.",
 };
 
 export default function DesignLayout({ children }: { children: React.ReactNode }) {

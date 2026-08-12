@@ -63,16 +63,34 @@
   letter-spacing: -0.03em;
 }
 
+/*
+ * Muted by opacity rather than colour because the row inverts on hover: ink on
+ * paper one moment, paper on blue the next. See --muted-alpha, which is the
+ * floor that holds on both.
+ */
 .summary {
   margin-top: 6px;
   font-size: clamp(13px, 1.1vw, 15px);
   line-height: 1.45;
-  opacity: 0.62;
+  opacity: var(--muted-alpha);
   transition: opacity 0.3s;
 }
 
 .row:hover .summary {
   opacity: 1;
+}
+
+/*
+ * Full strength, unlike the summary above it. Both are secondary to the title,
+ * but this one carries the numbers, and a reader skimming the index at speed is
+ * skimming for exactly these three lines.
+ */
+.outcome {
+  margin-top: 8px;
+  font-size: clamp(12px, 1vw, 13px);
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
 }
 
 .thumb {
@@ -109,12 +127,12 @@
   text-align: right;
   font-size: 11px;
   line-height: 1.5;
-  opacity: 0.5;
+  opacity: var(--muted-alpha);
   transition: opacity 0.3s;
 }
 
 .row:hover .meta {
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .arrow {

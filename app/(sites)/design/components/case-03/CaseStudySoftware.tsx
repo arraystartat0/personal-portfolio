@@ -1,7 +1,9 @@
 import { salesPlatform } from "../../data/caseStudies";
 import { banner } from "../../data/salesSystem";
+import { CASE_SALES_ID } from "../../lib/anchors";
 import ds from "../../styles/design.module.css";
 import BeatCard from "../BeatCard";
+import CaseGlance from "../CaseGlance";
 import { CiteMarks, collectCites, SourceList } from "../Citations";
 import Disclosure from "../Disclosure";
 import Findings from "../Findings";
@@ -17,8 +19,9 @@ import PrototypeApp from "./PrototypeApp";
 import { ShippedDashboard, ShippedOrders, ShippedTrash } from "./ShippedSystem";
 import styles from "./CaseStudySoftware.module.css";
 
-/* One namespace for the study, so every marker resolves into the single list. */
-const CITE_ID = "c03";
+/* One namespace for the study, so every marker resolves into the single list.
+   The study's own anchor rather than a second string. See case-02. */
+const CITE_ID = CASE_SALES_ID;
 
 const [networkBeat, trainingBeat, supportBeat] = salesPlatform.beats;
 
@@ -142,6 +145,8 @@ export default function CaseStudySoftware() {
           {salesPlatform.title}
         </Reveal>
 
+        <CaseGlance glance={salesPlatform.glance} />
+
         <div className={styles.intro}>
           <div className={styles.introText}>
             {salesPlatform.intro.map((paragraph, index) => (
@@ -208,6 +213,7 @@ export default function CaseStudySoftware() {
             label={salesPlatform.diagnosis.label}
             findings={salesPlatform.diagnosis.findings}
             citeOrder={cited}
+            fold={salesPlatform.diagnosis.fold}
           />
         </Reveal>
 
@@ -225,6 +231,7 @@ export default function CaseStudySoftware() {
             label={salesPlatform.prototype.label}
             findings={salesPlatform.prototype.findings}
             citeOrder={cited}
+            fold={salesPlatform.prototype.fold}
           />
         </Reveal>
 
@@ -247,7 +254,10 @@ export default function CaseStudySoftware() {
 
           {/* Three screens in one frame, so they read as one product. */}
           <div className={styles.screenLabel}>{salesPlatform.screens.dashboardKicker}</div>
-          <ShippedDashboard />
+          {/* data-thumb: scripts/thumbs.mjs photographs this for the work index. */}
+          <div data-thumb="sales">
+            <ShippedDashboard />
+          </div>
 
           <div className={`${styles.screenLabel} ${styles.screenLabelStacked}`}>
             {salesPlatform.screens.ordersKicker}

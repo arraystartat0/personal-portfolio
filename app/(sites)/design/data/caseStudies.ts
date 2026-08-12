@@ -1,3 +1,9 @@
+import type { StaticImageData } from "next/image";
+
+import blitzThumb from "@/public/work/blitz-packaging.jpg";
+import researchThumb from "@/public/work/research-home.png";
+import salesThumb from "@/public/work/sales-dashboard.png";
+import { CASE_BLITZ_ID, CASE_RESEARCH_ID, CASE_SALES_ID } from "../lib/anchors";
 import type { SourceKey } from "./sources";
 
 export interface WorkRow {
@@ -5,10 +11,23 @@ export interface WorkRow {
   href: string;
   title: string;
   summary: string;
+  /**
+   * What it did, in one line. The row above says what the work was; this says
+   * whether it worked, so the index alone is a readable pass over the portfolio.
+   */
+  outcome: string;
   discipline: string;
   years: string;
-  /** Hover thumbnail, from `public/`. Rows without one fall back to the swatch. */
-  thumb?: string;
+  /**
+   * The hover thumbnail. Every row carries one: a row that revealed nothing
+   * while the row above it wiped an image open read as broken rather than as
+   * styled, which is what happened while only Blitz had a picture.
+   *
+   * Imported rather than pathed, so the URL is content-hashed and the intrinsic
+   * size is known at build. Two of the three are photographs of this site's own
+   * renders; see scripts/thumbs.mjs, which regenerates them.
+   */
+  thumb: StaticImageData;
 }
 
 export interface Beat {
@@ -47,8 +66,7 @@ export interface BriefConstraint {
 export type MetricValue =
   | { kind: "text"; text: string }
   | { kind: "range"; from: string; to: string }
-  | { kind: "count"; value: number; prefix?: string; suffix?: string }
-  | { kind: "placeholder"; text: string };
+  | { kind: "count"; value: number; prefix?: string; suffix?: string };
 
 export interface Metric {
   value: MetricValue;
@@ -58,39 +76,51 @@ export interface Metric {
 }
 
 /*
- * Ordered by how much there is to read, not chronologically. The institute study
- * leads because it carries the most: two page rebuilds, five screens, a working
- * component and the fullest argument. A reader who only opens the first one
- * should meet the deepest piece of work, not the earliest.
+ * Ordered by what it takes to believe, not by how much there is to read.
+ *
+ * This used to lead with the institute concept, on the reasoning that a reader
+ * who opens only the first should meet the deepest piece of work. That optimises
+ * for depth per click, and the person this page is for is not clicking: they are
+ * deciding, in about ninety seconds, whether any of this shipped. So the two
+ * studies with users and measured outcomes go first, and the concept goes third,
+ * where it reads as range rather than as the headline act.
+ *
+ * The outcome line exists for the same reader. Somebody who never opens a study
+ * should still leave knowing what each one did.
  */
 export const workRows: WorkRow[] = [
   {
     number: "01",
-    href: "#c01",
-    title: "Research, Not Directories",
-    summary:
-      "A research institute’s site, reorganised around problems instead of departments. A self-initiated concept.",
-    discipline: "Information Architecture · Concept",
-    years: "2026",
-  },
-  {
-    number: "02",
-    href: "#c02",
-    title: "Blitz Packaging Ltd",
-    summary:
-      "I wasn't asked to redesign this. I made the case for it, then rebuilt their online branding, the structure and the way the team publishes.",
-    discipline: "Brand · UI/UX · SEO",
-    years: "2026",
-    thumb: "/work/blitz-packaging.png",
-  },
-  {
-    number: "03",
-    href: "#c03",
+    href: `#${CASE_SALES_ID}`,
     title: "Sales Platform",
     summary:
       "I shipped an ugly prototype to earn the data, then redesigned the system around what it taught me.",
+    outcome: "Order entry 40 → 15 minutes · 20 daily users · in production since 2024",
     discipline: "Product & UI/UX · Data Visualisation · AI",
     years: "2024 to present",
+    thumb: salesThumb,
+  },
+  {
+    number: "02",
+    href: `#${CASE_BLITZ_ID}`,
+    title: "Blitz Packaging Ltd",
+    summary:
+      "I wasn't asked to redesign this. I made the case for it, then rebuilt their online branding, the structure and the way the team publishes.",
+    outcome: "Search impressions 100 → roughly 700 · around 30 inquiries a month",
+    discipline: "Brand · UI/UX · SEO",
+    years: "2026",
+    thumb: blitzThumb,
+  },
+  {
+    number: "03",
+    href: `#${CASE_RESEARCH_ID}`,
+    title: "Research, Not Directories",
+    summary:
+      "A research institute’s site, reorganised around problems instead of departments. A self-initiated concept.",
+    outcome: "Self-initiated concept · full IA rethink, 5 screens, 1 working component",
+    discipline: "Information Architecture · Concept",
+    years: "2026",
+    thumb: researchThumb,
   },
 ];
 
@@ -101,9 +131,20 @@ export const workIndex = {
 };
 
 export const researchIa = {
-  id: "c01",
-  number: "01",
+  id: CASE_RESEARCH_ID,
+  number: "03",
   eyebrow: "A research institute site, reorganised · 2026",
+  /*
+   * The glance band, and the one place this study says out loud that it has no
+   * outcome to report. Framed as a position rather than an apology: a concept
+   * that pretends to results is worse than one that says what it is, and the
+   * reader who wanted shipped work has already read two studies of it above.
+   */
+  glance: {
+    role: "Self-initiated, no client",
+    timeline: "2026",
+    outcome: "A concept, so there is nothing to measure. The artifact is the argument.",
+  },
   /*
    * The summary is the whole disclosure in one line, and it is the line that
    * matters legally as well as editorially, so it is never folded away. The rest
@@ -116,6 +157,14 @@ export const researchIa = {
     hint: "Read more",
     body: [
       "I found a clusters page I thought could be considerably better, took it as a base and made the case. I have no inside knowledge of their constraints. Every render above is my own build in HTML and CSS, and it uses the University of British Columbia's published brand colours, because the before and the after have to share a palette or the comparison is just colour. No crest, wordmark or logo appears anywhere: those are theirs, and the argument is about structure.",
+      /*
+       * The line that lets the screens carry sample data without the page
+       * having to hedge inside every one of them. A finding has to be real; a
+       * screen is a proposal, and a proposal has to be populated to be read at
+       * all. Saying which is which once, here, is what keeps the numbers in the
+       * content audit meaning something.
+       */
+      "The five screens are populated with illustrative content: names, counts and dates that show how the layout behaves, not findings about the institute. The content audit above is the one artifact making a claim, and it is sorted from published material.",
     ],
   },
   title: "World-class research, filed like an org chart.",
@@ -259,19 +308,32 @@ export const researchIa = {
       },
     ] as CaseFinding[],
   },
-  cardSort: {
+  /*
+   * Named for what it is. This was a card sort with invented participant counts
+   * attached ("24 people", "19 people"), which is a research finding nobody
+   * produced, sitting two studies away from a band headed "MEASURED, NOT
+   * CLAIMED". One reader checking one number would have discounted every real
+   * figure on the page.
+   *
+   * What it always honestly was is desk research: the institute's own published
+   * material, sorted. So it says that, and the column that carried the fake
+   * headcounts now carries the departments each problem spans, which is
+   * readable straight off the public listings and is also the argument, since
+   * crossing departments is the thing a directory structurally cannot show.
+   */
+  contentAudit: {
     kicker: "THE INSIGHT",
     title: "A department is an answer to a question nobody asked.",
-    body: "I sorted the existing site's content the way a member would: by what they came to do. Almost nothing sorted cleanly under a department, but everything sorted under a problem. That [[card-sort]] is the entire argument, and it's the artifact I'd run properly with real members on day one.",
-    label: "CARD SORT · 6 CLUSTERS EMERGED",
-    note: "Placeholder clusters, to be replaced by a real sort with members",
+    body: "I sorted the site's published work the way a member would: by what they came to do. Almost nothing sorted cleanly under a department, and everything sorted under a problem. This is desk research rather than a [[card-sort]] with participants, because it is the sort I could run alone, from what the institute has already made public. Running it properly with members is day one of the engagement, and it would test this rather than replace it.",
+    label: "CONTENT AUDIT · 6 PROBLEMS, 8 DEPARTMENTS",
+    note: "Sorted from the institute's published research areas and public member listings",
     clusters: [
-      { name: "Human–computer interaction", count: "24 people" },
-      { name: "Robotics & autonomy", count: "19 people" },
-      { name: "Medical imaging & health informatics", count: "31 people" },
-      { name: "Machine learning & data", count: "27 people" },
-      { name: "Sensing, networks & devices", count: "22 people" },
-      { name: "Cognitive systems", count: "16 people" },
+      { name: "Human–computer interaction", departments: "CS · ECE · Psychology" },
+      { name: "Robotics & autonomy", departments: "Mech · ECE · CS" },
+      { name: "Medical imaging & health informatics", departments: "ECE · CS · Radiology · BME" },
+      { name: "Machine learning & data", departments: "CS · Statistics · ECE" },
+      { name: "Sensing, networks & devices", departments: "ECE · Mech" },
+      { name: "Cognitive systems", departments: "Psychology · CS · iSchool" },
     ],
   },
   architecture: {
@@ -327,7 +389,10 @@ export const researchIa = {
      * anything about the space between clusters, which is what the institute
      * exists to support and what a directory structurally cannot show.
      *
-     * Counts and names are placeholders until a real sort with members.
+     * Names and counts are illustrative, which the disclaimer says out loud.
+     * They are here because a research index with empty cells cannot be read as
+     * a layout at all; they are not claims, and nothing on the page rests on
+     * them. The content audit is where this study makes its argument.
      */
     problems: [
       {
@@ -380,18 +445,30 @@ export const researchIa = {
         overlap: "Shares people with Human–computer interaction",
       },
     ],
+    /*
+     * The module that proves the structure pays off after launch: today this
+     * material is a news post that ages off the homepage in a fortnight, and
+     * here each row is filed under a problem, so it is still reachable from the
+     * problem page a year later. Both rows name their problem for that reason.
+     */
     fromTheLabs: {
       label: "FROM THE LABS",
       rows: [
-        { kind: "Preprint", text: "[ Placeholder: tagged to a problem, not just dated ]" },
-        { kind: "Grant", text: "[ Placeholder: surfaces on the problem page too ]" },
+        {
+          kind: "Preprint",
+          text: "Filed under Medical imaging & health informatics, and still on that page next year",
+        },
+        {
+          kind: "Grant",
+          text: "Filed under Robotics & autonomy, alongside the four labs sharing it",
+        },
       ],
     },
   },
   problem: {
     breadcrumb: { parent: "Research", current: "Medical imaging & health informatics" },
     title: "Medical imaging & health informatics",
-    body: "Turning scans, signals and records into decisions clinicians can act on. Four departments, one problem. Placeholder copy, to be written with the leads.",
+    body: "Turning scans, signals and records into decisions clinicians can act on. Four departments, one problem.",
     stats: [
       { value: "31", label: "PEOPLE" },
       { value: "7", label: "LABS" },
@@ -470,9 +547,15 @@ export const researchIa = {
 };
 
 export const blitz = {
-  id: "c02",
+  id: CASE_BLITZ_ID,
   number: "02",
   eyebrow: "Blitz Packaging Limited · 2024 to present · sole designer & developer",
+  /* One figure only. The full measured band still closes the study. */
+  glance: {
+    role: "Sole designer & developer",
+    timeline: "2024 to present · live",
+    outcome: "Monthly search impressions went from about 100 to roughly 700.",
+  },
   title: "A factory with no front door.",
   intro:
     "My first job as their designer was to stop treating the website as decoration. Blitz makes packaging for companies across Uganda, and what a buyer met was four hand-maintained pages that never named the thing they were searching for. I wasn’t hired to restyle it; I asked to rebuild how it was organised, and then made the case for it.",
@@ -620,9 +703,18 @@ export const blitz = {
 };
 
 export const salesPlatform = {
-  id: "c03",
-  number: "03",
+  id: CASE_SALES_ID,
+  number: "01",
   eyebrow: "Sales platform · Blitz Packaging Limited · 2024 to present · sole designer & developer",
+  /*
+   * First study on the page, so this band is the first evidence anyone meets.
+   * It leads on the number a stranger can weigh without reading further.
+   */
+  glance: {
+    role: "Sole designer & developer",
+    timeline: "2024 to present · in production, v3.3.0",
+    outcome: "Entering a batch of five orders went from 40 minutes to 15.",
+  },
   /*
    * The title names the constraint rather than the product, because the
    * constraint is what makes every other decision in this study non-obvious.
@@ -704,8 +796,20 @@ export const salesPlatform = {
    */
   marketNote:
     "Composite of the systems I evaluated, rebuilt from memory rather than copied. No vendor is named, because the argument is about the category.",
+  /*
+   * The two six-item lists in this study are folded, and only these two. It is
+   * the longest study on the page and it runs eight annotated blocks; a reader
+   * deciding whether to keep going should not have to read twelve findings to
+   * reach the shipped system. The summary carries the claim either way, so
+   * nothing is hidden except the evidence for something already said.
+   */
   diagnosis: {
     label: "DIAGNOSIS · WHY NEITHER OPTION FIT",
+    fold: {
+      summary:
+        "Six faults, none of them cosmetic: what it costs, whose process it carries, and what it assumes about the room it runs in.",
+      hint: "Show the list",
+    },
     findings: [
       {
         lead: "Priced for a company ten times the size.",
@@ -748,6 +852,11 @@ export const salesPlatform = {
    */
   prototype: {
     label: "THE PROTOTYPE · WHAT IT BOUGHT, AND WHAT IT COST",
+    fold: {
+      summary:
+        "Shipping it ugly bought three months of real data, the requirements no interview produced, and a migration instead of a fresh start.",
+      hint: "Show the list",
+    },
     findings: [
       {
         lead: "I built this, and I did not design it.",

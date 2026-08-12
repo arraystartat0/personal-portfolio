@@ -20,13 +20,25 @@ export default function DesignPage() {
       <Reveal className={ds.rule} variant="rule" />
       <HowIWork />
 
+      {/*
+        The studies in the order the index lists them: shipped, shipped, concept.
+        Ordered by what it takes to believe rather than by how much there is to
+        read, because the reader this page is for is deciding in about ninety
+        seconds whether any of it shipped.
+
+        "How I work" stays above the index, where it has always been. It was
+        tried below the studies, to put named work with outcomes in the second
+        screenful, and the ScatterGrid was too good a thing to bury three long
+        studies deep to buy that.
+      */}
       <div className={ds.rule} />
       <WorkIndex />
-      <CaseStudyResearch />
 
+      <CaseStudySoftware />
       <div className={ds.rule} />
       <CaseStudyBlitz />
-      <CaseStudySoftware />
+      <div className={ds.rule} />
+      <CaseStudyResearch />
 
       <SideProjects />
       <About />

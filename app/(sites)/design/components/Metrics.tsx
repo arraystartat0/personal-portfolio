@@ -31,12 +31,6 @@ function MetricFigure({ value, highlight }: { value: MetricValue; highlight?: bo
           {value.to}
         </div>
       );
-    case "placeholder":
-      return (
-        <div>
-          <div className={ds.metricPlaceholder}>{value.text}</div>
-        </div>
-      );
     case "text":
     default:
       return <div className={className}>{value.text}</div>;

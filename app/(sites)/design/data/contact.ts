@@ -6,7 +6,8 @@ export interface ContactChannel {
 }
 
 export const contact = {
-  kicker: "Available for a web design role · Vancouver & remote",
+  // Same two words as the nav discipline and the hero's Currently. See site.ts.
+  kicker: "Available for design engineer roles · Vancouver & remote",
   headline: { lead: "Got a mess?\nLet's give it ", accent: "a shape." },
   channels: [
     {

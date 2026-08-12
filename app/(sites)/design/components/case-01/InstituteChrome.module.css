@@ -13,10 +13,16 @@
   border-bottom: 1px solid #e3e3e3;
 }
 
+/*
+ * The slug where the university's crest would be. It is deliberately not drawn
+ * (see the study's disclaimer: the crest is theirs), so this is text reading
+ * "[ UNIVERSITY MARK ]" with no logotype exemption behind it, and at 8px the
+ * grey it used to be measured 3.04:1. The dashed border is what says stand-in.
+ */
 .mark {
   padding: 7px 9px;
   border: 1px dashed #b9c2cc;
-  color: #8b95a1;
+  color: #66707c;
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.08em;

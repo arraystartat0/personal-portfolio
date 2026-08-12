@@ -8,6 +8,14 @@
   --pm-accent: #0055b7;
   --pm-soft: #e4f1fa;
   --pm-hair: rgba(0, 33, 69, 0.16);
+  /*
+   * One muted value where there were four written by hand: 0.55, 0.6, 0.6 and
+   * 0.66, at 8 and 9px, of which the first three were under 4.5:1 on the white
+   * these mocks sit on (3.57:1 and 4.16:1). Matched to --ins-muted in the screen
+   * renders, which is the palette these sketches are quoting anyway. 5.32:1 on
+   * white, and it clears --pm-soft too.
+   */
+  --pm-muted: rgba(27, 39, 51, 0.68);
 
   margin-top: 14px;
   padding: 11px;
@@ -73,7 +81,7 @@
 
 .keyHint {
   font-size: 9px;
-  color: rgba(27, 39, 51, 0.6);
+  color: var(--pm-muted);
 }
 
 .note {
@@ -81,7 +89,7 @@
   padding-top: 8px;
   border-top: 1px solid var(--pm-hair);
   font-size: 9px;
-  color: rgba(27, 39, 51, 0.6);
+  color: var(--pm-muted);
 }
 
 /* --- filter -------------------------------------------------------------- */
@@ -115,7 +123,7 @@
   padding-bottom: 6px;
   border-bottom: 1px solid var(--pm-hair);
   font-size: 9px;
-  color: rgba(27, 39, 51, 0.66);
+  color: var(--pm-muted);
 }
 
 .resultRow {
@@ -167,7 +175,7 @@
   font-size: 8px;
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: rgba(27, 39, 51, 0.55);
+  color: var(--pm-muted);
 }
 
 /* Square, grey, bevelled: the vocabulary the inherited page is built from. */
