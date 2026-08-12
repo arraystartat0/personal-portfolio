@@ -22,13 +22,25 @@ const poppins = Poppins({
   display: "swap",
 });
 
+/* Names the lane, because this string is the search result someone reads
+   before they decide whether to open the page at all. See site.ts. Running
+   prose, so "and" rather than the nav's ampersand. Hoisted to a constant only
+   so the card and the search result cannot drift apart. */
+const description =
+  "Designer and developer in Vancouver. Selected work by Maneet Bhatt: brand, interface and the systems underneath them.";
+
 export const metadata: Metadata = {
   title: "Design",
-  /* Names the lane, because this string is the search result someone reads
-     before they decide whether to open the page at all. See site.ts. Running
-     prose, so "and" rather than the nav's ampersand. */
-  description:
-    "Designer and developer in Vancouver. Selected work by Maneet Bhatt: brand, interface and the systems underneath them.",
+  description,
+  alternates: { canonical: "/design" },
+  openGraph: {
+    type: "website",
+    url: "/design",
+    /* Spelled out rather than left to the template: og:title has no template to
+       inherit, and a card reading just "Design" names nobody. */
+    title: "Design · Maneet Bhatt",
+    description,
+  },
 };
 
 export default function DesignLayout({ children }: { children: React.ReactNode }) {

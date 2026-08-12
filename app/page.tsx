@@ -1,9 +1,19 @@
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import MotionToggle from "./components/MotionToggle";
+import { personJsonLd } from "./lib/jsonLd";
 import { profile } from "./lib/profile";
 import { sites } from "./lib/sites";
 import styles from "./styles/hub.module.css";
+
+/* Title and description are inherited from the root layout, which already
+   describes the hub; this adds only the URL identity the layout cannot set for
+   everyone at once. */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 /** Staggers the entrance animation without any client-side JS. */
 const step = (i: number) => ({ "--i": i }) as CSSProperties;
@@ -11,6 +21,15 @@ const step = (i: number) => ({ "--i": i }) as CSSProperties;
 export default function Hub() {
   return (
     <main className={styles.root}>
+      {/*
+        On the hub and nowhere else. It describes the person, not the page, so
+        one copy at the root of the domain is the correct number: repeating it
+        on /design would assert the same identity twice from two URLs.
+      */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd()) }}
+      />
       <div className={styles.glow} aria-hidden="true" />
       <div className={styles.mesh} aria-hidden="true" />
 
