@@ -126,7 +126,16 @@ export const workRows: WorkRow[] = [
 
 export const workIndex = {
   heading: "Case studies",
-  hint: "hover a row · click to read",
+  /*
+   * Two hints, because the row has two behaviours and only one of them exists on
+   * a touch screen. Promising a hover to a reader who has no way to perform one
+   * describes a site they are not using, so the touch string offers only the half
+   * that works, in the verb that device actually uses.
+   */
+  hint: {
+    pointer: "hover a row · click to read",
+    touch: "tap a row to read",
+  },
   rows: workRows,
 };
 

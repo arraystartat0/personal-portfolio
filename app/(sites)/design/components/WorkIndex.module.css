@@ -21,6 +21,27 @@
   color: var(--ink-muted);
 }
 
+/*
+ * Both hint strings are in the markup and this picks one. Touch is the base, so
+ * a browser that cannot answer the query still gets the line that is true
+ * everywhere: a tap works on every device, a hover does not. Keyed on the input,
+ * not the width, because a wide touchscreen still cannot hover, and pointer: fine
+ * reports the primary pointer, so a stylus or trackpad laptop still passes.
+ */
+.hintPointer {
+  display: none;
+}
+
+@media (pointer: fine) and (hover: hover) {
+  .hintPointer {
+    display: inline;
+  }
+
+  .hintTouch {
+    display: none;
+  }
+}
+
 .row {
   display: flex;
   align-items: center;
@@ -93,7 +114,14 @@
   letter-spacing: 0.01em;
 }
 
+/*
+ * Gone outright where there is no hover, rather than left parked at width 0. The
+ * box has no way to open on a touch screen, and a browser that synthesises hover
+ * on first tap would widen the row under the finger that just tapped it, moving
+ * the target mid-gesture. Nothing to reveal, so nothing to lay out.
+ */
 .thumb {
+  display: none;
   height: 78px;
   flex: none;
   width: 0;
@@ -104,9 +132,15 @@
     opacity 0.3s;
 }
 
-.row:hover .thumb {
-  width: 150px;
-  opacity: 1;
+@media (pointer: fine) and (hover: hover) {
+  .thumb {
+    display: block;
+  }
+
+  .row:hover .thumb {
+    width: 150px;
+    opacity: 1;
+  }
 }
 
 /*

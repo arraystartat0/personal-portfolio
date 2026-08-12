@@ -19,7 +19,16 @@ export default function WorkIndex() {
           the previous section's h2 instead.
         */}
         <h2 className={styles.heading}>{workIndex.heading}</h2>
-        <div className={styles.hint}>{workIndex.hint}</div>
+        {/*
+          Both strings ship and CSS hides one. The page is prerendered, so
+          reading the input device at render time is not available, and reading it
+          on the client would mean a hydration mismatch or a hint that changes
+          under the reader. A media query is the only thing that can pick here.
+        */}
+        <div className={styles.hint}>
+          <span className={styles.hintPointer}>{workIndex.hint.pointer}</span>
+          <span className={styles.hintTouch}>{workIndex.hint.touch}</span>
+        </div>
       </div>
 
       {workIndex.rows.map((row, index) => (
